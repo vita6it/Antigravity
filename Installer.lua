@@ -33,12 +33,12 @@ local Components = GetModule("Components")(Parallels, Configurations, Cascade, L
 local Plugins = GetModule("Plugins")(Components, Configurations, Others, Cascade)
 
 return {
-    Components = Components,
-    Plugins = Plugins,
-    Connections = Connections,
-    Parallels = Parallels,
     Configurations = Configurations,
+    Connections = Connections,
 	SaveManager = SaveManager,
+    Components = Components,
+    Parallels = Parallels,
 	Settings = Settings,
+    Plugins = Plugins,
 	Cascade = Cascade,
 }

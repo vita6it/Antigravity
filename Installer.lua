@@ -21,19 +21,19 @@ end
 local Cascade = GetModule("Cascade")
 
 local Configurations = GetModule("Configurations")("Antigravity")
-local Parallels = GetModule("Parallels")()
+local Connections = GetModule("Connections")()
 local Library = GetModule("Library")(Cascade)
+local Parallels = GetModule("Parallels")()
 local Others = GetModule("Others")()
 
 local SaveManager = Configurations.Configurations
 local Settings = Configurations.Settings
 
-local Connections = GetModule("Connections")()
-local Components = GetModule("Components")
+local Components = GetModule("Components")(Parallels, Configurations, Cascade, Library, Others)
 local Plugins = GetModule("Plugins")(Components, Configurations, Others, Cascade)
 
 return {
-    Components = Components(Parallels, Configurations, Cascade, Library, Others),
+    Components = Components,
     Plugins = Plugins,
     Connections = Connections,
     Parallels = Parallels,

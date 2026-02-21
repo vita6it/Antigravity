@@ -27,16 +27,13 @@ local Parallels = GetModule("Parallels")()
 local Others = GetModule("Others")()
 
 local Components = GetModule("Components")(Parallels, Configurations, Cascade, Library, Others)
-local Plugins = GetModule("Plugins")(Components, Configurations, Others, Cascade, Library)
-
-local Settings = Components.Settings
 
 return {
     Components = Components.Components,
     Configurations = Configurations,
+    Settings = Components.Settings,
+    Plugins = Components.Plugins,
     Connections = Connections,
     Parallels = Parallels,
-	Settings = Settings,
-    Plugins = Plugins,
 	Cascade = Cascade,
 }

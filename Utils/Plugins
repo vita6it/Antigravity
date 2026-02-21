@@ -1,5 +1,8 @@
-return(function(Components, Configurations, Others, Casecade, Library)
+return(function(self, Configurations, Others, Casecade, Library)
     local Plugins = {}
+    
+    local Components = self.Components
+    local Settings = self.Settings
 
     local JobId = game.JobId
 
@@ -111,10 +114,10 @@ return(function(Components, Configurations, Others, Casecade, Library)
         local Config = Components:MakeTab(Section, { "Configuration", 134261589888025 }) do
             local _1 = Components:NewPage(Config, { "Configurations", "Manage and customize system configuration settings." }) do
                 local Button = Components:Button(_1, { "Remove Worksapce", "Reset save setting file to default value.", "Remove" }, function()
-                    local Files = Configurations.FullPaths or SaveManager.FullPaths
+                    local Files = Configurations.FullPaths
 
                     if Files and isfile(Files) then
-                        pcall(delfile, Configurations.FullPaths or SaveManager.FullPaths)
+                        pcall(delfile, Configurations.FullPaths)
                         warn('Remove Success')
                     else
                         warn('File not found')

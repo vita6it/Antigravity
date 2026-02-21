@@ -18,22 +18,24 @@ local function GetModule(module)
     return Utils(Owner, Repository, "Utils/" .. module)
 end
 
+local Settings = {}
+
 local Cascade = GetModule("Cascade")
 
-local Configurations = GetModule("Configurations")("Antigravity")
+local Configurations = GetModule("Configurations")("Antigravity", Settings)
 local Connections = GetModule("Connections")()
 local Library = GetModule("Library")(Cascade)
 local Parallels = GetModule("Parallels")()
 local Others = GetModule("Others")()
 
-local Components = GetModule("Components")(Parallels, Configurations, Cascade, Library, Others)
+local Components = GetModule("Components")(Parallels, Configurations, Settings, Cascade, Library, Others)
 
 return {
     Components = Components.Components,
     Configurations = Configurations,
-    Settings = Components.Settings,
     Plugins = Components.Plugins,
     Connections = Connections,
     Parallels = Parallels,
+    Settings = Settings,
 	Cascade = Cascade,
 }

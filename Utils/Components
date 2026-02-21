@@ -1,10 +1,9 @@
 return(function(Parallels, Configurations, Casecade, Library, Others)
-    local Components = { NewTabs = true }
+    local Components, Settings = { NewTabs = true }, {}
 
 	local Enabled, Options = Parallels.FullOptions()
 
 	local SaveManager = Configurations.Configurations
-	local Settings = Configurations.Settings
     local Threads = Parallels.Threads
     
     local JobId = game.JobId
@@ -41,8 +40,6 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
 
 	function Components:Toggle(Forms, Info, Flag, UnQueue, Callback)
         local Thread = nil
-        
-        print(Settings[Flag])
 
 		return Library.Toggle(Forms, Info, Settings[Flag], function(self, value)
 			Settings[Flag] = value
@@ -93,7 +90,10 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
 
 			if Callback then Callback(value) end
 		end)
-	end
+    end
 
-	return Components
+    return {
+        Components = Components,
+        Settings = Configurations:Load()
+    }
 end)

@@ -1,8 +1,12 @@
 return(function(Components, Configurations, Others, Casecade, Library)
     local Plugins = {}
     
-    local SaveManager = Configurations.Configurations
+    local SaveManager = Configurations.Configurations do
+        Configurations.Settings = SaveManager:Load() 
+    end
+    
     local Settings = Configurations.Settings
+    
     local JobId = game.JobId
     
     function Plugins:Dashboard()

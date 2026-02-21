@@ -44,7 +44,7 @@ return(function(Components, Configurations, Others, Casecade)
         local Server = Components:MakeTab(Section, { "Server", 105159951926712 }) do
             local _1 = Components:NewPage(Server, { "Server", "Allows users to join and change to target server." }) do
 
-                SaveManager:Default("JobId", JobId)
+                set:Default("JobId", JobId)
 
                 Components:Textfield(_1, { "Enter JobId", "Paste the target server JobId to join a specific server instance."  }, "JobId")
 
@@ -69,7 +69,7 @@ return(function(Components, Configurations, Others, Casecade)
         local Appearance = Components:MakeTab(Section, { "Appearance", 92721515638108 }) do
             local _1 = Components:NewPage(Appearance, { "Theme", "Customize the overall look and visual style of the system." }) do
 
-                SaveManager:Default("Dark Mode", false)
+                set:Default("Dark Mode", false)
 
                 Components:Toggle(_1, { "Dark Mode", "Dark Mode is a application appearance setting that uses a dark color palette to provide a comfortable viewing experience tailored for low-light environments." }, "Dark Mode", true, function(value)
                     Library.app['Theme'] = value and Casecade.Themes.Dark or Casecade.Themes.Light
@@ -78,34 +78,34 @@ return(function(Components, Configurations, Others, Casecade)
 
             local _2 = Components:NewPage(Appearance, { "Input", "Configure input behavior and interaction settings." }) do
 
-                SaveManager:Default("Searchable", true)
-                SaveManager:Default("Draggable", true)
-                SaveManager:Default("Resizable", true)
+                set:Default("Searchable", true)
+                set:Default("Draggable", true)
+                set:Default("Resizable", true)
 
                 Components:Toggle(_2, { "Searchable", "Allows pages to be searched using a text field in the title bar." }, "Resizable", true, function(value)
-                    Components:SetValue('Searching', value)
+                    Plugins:SetValue('Searching', value)
                 end)
 
                 Components:Toggle(_2, { "Draggable", "Allows users to move the window with a mouse or touch device." }, "Draggable", true, function(value)
-                    Components:SetValue('Draggable', value)
+                    Plugins:SetValue('Draggable', value)
                 end)
 
                 Components:Toggle(_2, { "Resizable", "Allows users to resize the window with a mouse or touch device." }, "Resizable", true, function(value)
-                    Components:SetValue('Resizable', value)
+                    Plugins:SetValue('Resizable', value)
                 end)
             end
 
             local _3 = Components:NewPage(Appearance, { "Effects", "These effects may be resource intensive across different systems." }) do
 
-                SaveManager:Default("Shadow", true)
-                SaveManager:Default("Acrylic", false)
+                set:Default("Shadow", true)
+                set:Default("Acrylic", false)
 
                 Components:Toggle(_3, { "Shadow", "Enables a dropshadow effect on the window." }, "Shadow", true, function(value)
-                    Components:SetValue('Dropshadow', value)
+                    Plugins:SetValue('Dropshadow', value)
                 end)
 
                 Components:Toggle(_3, { "Acrylic", "Enables a UI background blur effect on the window." }, "Acrylic", true, function(value)
-                    Components:SetValue('UIBlur', value)
+                    Plugins:SetValue('UIBlur', value)
                 end)
             end
         end

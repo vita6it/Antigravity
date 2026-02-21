@@ -3,7 +3,7 @@ local _ENV = (getgenv or getrenv or getfenv)()
 local Owner = "vita6it"
 local Repository = "Antigravity"
 
-local Utils = (function(owner, repo, file)
+local Utils = _ENV.Utils or (function(owner, repo, file)
 	local URL = string.format(
 		"https://raw.githubusercontent.com/%s/%s/main/%s",
 		owner, repo, file
@@ -30,9 +30,11 @@ local Settings = Configurations.Settings
 
 local Connections = GetModule("Connections")()
 local Components = GetModule("Components")
+local Plugins = GetModule("Plugins")(Components, Configurations, Others, Cascade)
 
 return {
     Components = Components(Parallels, Configurations, Cascade, Library, Others),
+    Plugins = Plugins,
     Connections = Connections,
     Parallels = Parallels,
     Configurations = Configurations,

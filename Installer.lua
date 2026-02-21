@@ -26,17 +26,15 @@ local Library = GetModule("Library")(Cascade)
 local Parallels = GetModule("Parallels")()
 local Others = GetModule("Others")()
 
-local SaveManager = Configurations.Configurations
-local Settings = Configurations.Settings
-
 local Components = GetModule("Components")(Parallels, Configurations, Cascade, Library, Others)
 local Plugins = GetModule("Plugins")(Components, Configurations, Others, Cascade, Library)
 
+local Settings = Components.Settings
+
 return {
+    Components = Components.Components,
     Configurations = Configurations,
     Connections = Connections,
-	SaveManager = SaveManager,
-    Components = Components,
     Parallels = Parallels,
 	Settings = Settings,
     Plugins = Plugins,

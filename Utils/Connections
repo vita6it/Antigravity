@@ -1,0 +1,24 @@
+return(function()
+	local _ENV = (getgenv or getrenv or getfenv)()
+	local Cached, Connections = _ENV.Connections or {}, {}
+	
+	do
+		_ENV.Connections = Cached
+
+		for i = 1, #Cached do
+			Cached[i]:Disconnect()
+		end
+
+		table.clear(Cached)
+	end
+	
+	function Connections:Connect(Instance, Callback)
+		local Connection = Instance:Connect(Callback)
+		
+		table.insert(Cached, Connection)
+		
+		return Connection
+	end 
+	
+	return Connections
+end)

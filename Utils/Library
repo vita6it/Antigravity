@@ -76,12 +76,10 @@ return(function(Cascade)
 	end)
     
     Library.NewPage = function(Tab, Info)
-        Tab:PageSection({
+        return Tab:PageSection({
             Title = Info[1],
             Subtitle = Info[2] or nil
-        })
-        
-        return Tab:Form()
+        }):Form()
     end
 
 	Library.Rows = (function(Forms, Search)

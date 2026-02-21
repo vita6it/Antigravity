@@ -89,9 +89,11 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
 			if Callback then Callback(value) end
 		end)
     end
+    
+    Settings = Configurations:Load() 
 
     return {
         Components = Components,
-        Settings = Configurations:Load()
+        Settings = Settings
     }
 end)

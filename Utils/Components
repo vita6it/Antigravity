@@ -40,7 +40,9 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
 	end
 
 	function Components:Toggle(Forms, Info, Flag, UnQueue, Callback)
-		local Thread = nil
+        local Thread = nil
+        
+        print(Settings[Flag])
 
 		return Library.Toggle(Forms, Info, Settings[Flag], function(self, value)
 			Settings[Flag] = value

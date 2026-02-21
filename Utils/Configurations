@@ -67,8 +67,5 @@ return(function(Files: string)
 		Configurations:Default("Success", true)
 	end
 
-	return {
-		Configurations = Configurations,
-		Settings = Configurations:Load()
-	}
+    return Configurations
 end)

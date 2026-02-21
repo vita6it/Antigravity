@@ -3,7 +3,7 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
 
 	local Enabled, Options = Parallels.FullOptions()
 
-	local SaveManager = Configurations.Configurations
+	local SaveManager = Configurations
     local Threads = Parallels.Threads
     
     local JobId = game.JobId

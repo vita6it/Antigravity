@@ -1,5 +1,7 @@
-return(function(Files, Settings)
-	local Configurations = {}
+return(function(Files)
+    local _ENV = (getgenv or getrenv or getfenv)()
+    
+    local Configurations, Settings = {}, {}
 
 	local PlaceId = game.PlaceId
 	local HttpService = game:GetService('HttpService')
@@ -65,7 +67,10 @@ return(function(Files, Settings)
 	do
 		Configurations:Folder()
 		Configurations:Default("Success", true)
-	end
+    end
 
-    return Configurations
+    return {
+        Configurations = Configurations,
+        Settings = Settings
+    }
 end)

@@ -118,7 +118,7 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
             local Optimize = self:MakeTab(Section, { "Optimize", 134831414664674 }) do
                 local _1 = self:NewPage(Optimize, { "Optimize", "Allows users to improve performance, efficiency" }) do
 
-                    Configurations:Default("White Screen", false)
+                    SaveManager:Default("White Screen", false)
 
                     self:Toggle(_1, { "White Screen", "Disabled 3D Rendering to improve performance" }, "White Screen", true, function(value)
                         Others.Optimize:Set3d(value)
@@ -133,7 +133,7 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
             local Server = self:MakeTab(Section, { "Server", 105159951926712 }) do
                 local _1 = self:NewPage(Server, { "Server", "Allows users to join and change to target server." }) do
                     
-                    Configurations:Default("JobId", JobId)
+                    SaveManager:Default("JobId", JobId)
                     
                     self:Textfield(_1, { "Enter JobId", "Paste the target server JobId to join a specific server instance."  }, "JobId")
 
@@ -158,7 +158,7 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
             local Appearance = self:MakeTab(Section, { "Appearance", 92721515638108 }) do
                 local _1 = self:NewPage(Appearance, { "Theme", "Customize the overall look and visual style of the system." }) do
                     
-                    Configurations:Default("Dark Mode", false)
+                    SaveManager:Default("Dark Mode", false)
                     
                     self:Toggle(_1, { "Dark Mode", "Dark Mode is a application appearance setting that uses a dark color palette to provide a comfortable viewing experience tailored for low-light environments." }, "Dark Mode", true, function(value)
                         self:SetValue('Theme', value and Casecade.Themes.Dark or Casecade.Themes.Light)
@@ -167,9 +167,9 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
 
                 local _2 = self:NewPage(Appearance, { "Input", "Configure input behavior and interaction settings." }) do
                     
-                    Configurations:Default("Searchable", true)
-                    Configurations:Default("Draggable", true)
-                    Configurations:Default("Resizable", true)
+                    SaveManager:Default("Searchable", true)
+                    SaveManager:Default("Draggable", true)
+                    SaveManager:Default("Resizable", true)
 
                     self:Toggle(_2, { "Searchable", "Allows pages to be searched using a text field in the title bar." }, "Resizable", true, function(value)
                         self:SetValue('Searching', value)
@@ -186,8 +186,8 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
 
                 local _3 = self:NewPage(Appearance, { "Effects", "These effects may be resource intensive across different systems." }) do
                     
-                    Configurations:Default("Shadow", true)
-                    Configurations:Default("Acrylic", false)
+                    SaveManager:Default("Shadow", true)
+                    SaveManager:Default("Acrylic", false)
                     
                     self:Toggle(_3, { "Shadow", "Enables a dropshadow effect on the window." }, "Shadow", true, function(value)
                         self:SetValue('Dropshadow', value)

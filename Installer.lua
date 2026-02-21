@@ -30,7 +30,7 @@ local SaveManager = Configurations.Configurations
 local Settings = Configurations.Settings
 
 local Components = GetModule("Components")(Parallels, Configurations, Cascade, Library, Others)
-local Plugins = GetModule("Plugins")(Components, Configurations, Others, Cascade)
+local Plugins = GetModule("Plugins")(Components, Configurations, Others, Cascade, Library)
 
 return {
     Configurations = Configurations,

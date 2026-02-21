@@ -37,7 +37,7 @@ return(function(Files: string)
 
 		function Configurations:Save(index, value)
 			if index ~= nil then
-				Configs[index] = value
+				Settings[index] = value
 			end
 
 			if not isfolder(Files) then

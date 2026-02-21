@@ -1,0 +1,74 @@
+return(function(Files: string)
+	local Configurations, Settings = {}, {}
+
+	local PlaceId = game.PlaceId
+	local HttpService = game:GetService('HttpService')
+
+	local isfolder = isfolder or function( ... ) return ... end
+	local makefolder = makefolder or function( ... ) return ... end
+
+	local isfile = isfile or function( ... ) return ... end
+	local readfile = readfile or function( ... ) return ... end
+	local writefile = writefile or function( ... ) return ... end
+
+	do
+		Configurations.Files = Files or "Antigravity"
+		Configurations.Set = `{Files}/settings`
+		Configurations.FullPaths = `{Configurations.Set}/{PlaceId}.json`
+		Configurations.Paths = { Files, Configurations.Set }
+	end
+
+	do
+		function Configurations:Folder()
+			for i = 1, #self.Paths do
+				local str = self.Paths[i]
+
+				if not isfolder(str) then
+					makefolder(str)
+				end
+			end
+		end
+
+		function Configurations:Default(index, value)
+			if Settings[index] == nil then
+				Settings[index] = value
+			end
+		end
+
+		function Configurations:Save(index, value)
+			if index ~= nil then
+				Configs[index] = value
+			end
+
+			if not isfolder(Files) then
+				makefolder(Files)
+			end
+
+			if not isfolder(Configurations.Set) then
+				makefolder(Configurations.Set)
+			end
+
+			writefile(Configurations.FullPaths, HttpService:JSONEncode(Settings))
+		end
+
+		function Configurations:Load()
+			if not isfile(Configurations.FullPaths) then
+				self:Save()
+			end
+
+			local Reader = readfile(Configurations.FullPaths) do
+				return HttpService:JSONDecode(Reader) 
+			end
+		end 
+	end
+
+	do
+		Configurations:Folder()
+		Configurations:Default("Success", true)
+	end
+
+	return {
+		Configurations = Configurations,
+		Settings = Configurations:Load()
+	}
+end)

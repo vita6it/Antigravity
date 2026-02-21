@@ -97,15 +97,15 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
 		function Components:Dashboard()
 			local Section = self:Section("Dashboard")
 			
-			local State = Components:MakeTab(Section, { "State", 134831414664674 }) do
+            local Analysis = Components:MakeTab(Section, { "Analysis", 136648496711424 }) do
 
 			end
 			
-			local Update = Components:MakeTab(Section, { "Tutorial", 134831414664674 }) do
+            local Update = Components:MakeTab(Section, { "Tutorial", 84780130894041 }) do
 
             end
             
-            return State
+            return Analysis
         end
         
         function Components:SetValue(index, value)
@@ -161,7 +161,7 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
                     SaveManager:Default("Dark Mode", false)
                     
                     self:Toggle(_1, { "Dark Mode", "Dark Mode is a application appearance setting that uses a dark color palette to provide a comfortable viewing experience tailored for low-light environments." }, "Dark Mode", true, function(value)
-                        self:SetValue('Theme', value and Casecade.Themes.Dark or Casecade.Themes.Light)
+                        Library.app['Theme'] = value and Casecade.Themes.Dark or Casecade.Themes.Light
                     end)
                 end
 
@@ -201,7 +201,16 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
 			
             local Configs = self:MakeTab(Section, { "Configuration", 134261589888025 }) do
                 local _1 = self:NewPage(Configs, { "Configurations", "Manage and customize system configuration settings." }) do
-                    
+                    local Button = self:Button(_1, { "Remove Worksapce", "Reset save setting file to default value.", "Remove" }, function()
+                        local Files = Configurations.FullPaths or SaveManager.FullPaths
+                        
+                        if Files and isfile(Files) then
+                            pcall(delfile, Configurations.FullPaths or SaveManager.FullPaths)
+                            warn('Remove Success')
+                        else
+                            warn('File not found')
+                        end
+                    end, "Destructive")
                 end
 			end
 		end

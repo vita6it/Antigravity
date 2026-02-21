@@ -85,7 +85,7 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
 	end
 
 	function Components:Textfield(Forms, Info, Flag, Callback)
-		return Library.Textfield(Forms, Info, Settings[Flag], function(value)
+		return Library.Textfield(Forms, Info, Settings[Flag], function(self, value)
 			Settings[Flag] = value
 			SaveManager:Save(Flag, value)
 

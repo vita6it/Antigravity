@@ -2,8 +2,6 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
     local Components, Settings = { NewTabs = true }, {}
 
 	local Enabled, Options = Parallels.FullOptions()
-
-	local SaveManager = Configurations
     local Threads = Parallels.Threads
     
     local JobId = game.JobId
@@ -43,7 +41,7 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
 
 		return Library.Toggle(Forms, Info, Settings[Flag], function(self, value)
 			Settings[Flag] = value
-			SaveManager:Save(Flag, value)
+			Configurations:Save(Flag, value)
 			
 			if not UnQueue then
 				Enabled[Flag] = value
@@ -64,7 +62,7 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
 	function Components:Slider(Forms, Info, Value, Flag, Callback)
 		return Library.Slider(Forms, Info, Value[3], { Value[1], Value[2], Settings[Flag] }, function(value)
 			Settings[Flag] = value
-			SaveManager:Save(Flag, value)
+			Configurations:Save(Flag, value)
 
 			if Callback then Callback(value) end
 		end)
@@ -73,7 +71,7 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
 	function Components:Dropdown(Forms, Info, List, Maximum, Flag, Callback)
 		return Library.Dropdown(Forms, Info, { List, Maximum, Settings[Flag] }, function(value)
 			Settings[Flag] = value
-			SaveManager:Save(Flag, value)
+			Configurations:Save(Flag, value)
 
 			if Callback then Callback(value) end
 		end)
@@ -86,7 +84,7 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
 	function Components:Textfield(Forms, Info, Flag, Callback)
 		return Library.Textfield(Forms, Info, Settings[Flag], function(self, value)
 			Settings[Flag] = value
-			SaveManager:Save(Flag, value)
+			Configurations:Save(Flag, value)
 
 			if Callback then Callback(value) end
 		end)

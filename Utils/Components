@@ -1,0 +1,211 @@
+return(function(Parallels, Configurations, Casecade, Library, Others)
+    local Components = { NewTabs = true }
+
+	local Enabled, Options = Parallels.FullOptions()
+
+	local SaveManager = Configurations.Configurations
+	local Settings = Configurations.Settings
+    local Threads = Parallels.Threads
+    
+    local JobId = game.JobId
+
+	function Components:Window(Info)
+		return Library.Window(Info)
+	end
+
+	function Components:Section(Text)
+		return Library.Section(Text)
+	end
+
+	function Components:MakeTab(Section, Info, Select)
+        return Library.Tab(Section, Info, Select)
+	end
+
+	function Components:NewPage(Tab, Info)
+		return Library.NewPage(Tab, Info)
+	end
+
+	function Components:TextLabel(Forms, Info, Mode)
+		if Mode == "r" then
+			Library.TextLabel(Forms, Info) do
+				return Library.RightLabel(Info[3] or "N/A") 
+			end
+		end
+
+		return Library.TextLabel(Forms, Info).TextLabel
+	end
+
+	function Components:Symbol(Forms, Info, Icon)
+		return Library.Symbol(Forms, Info, Icon)
+	end
+
+	function Components:Toggle(Forms, Info, Flag, UnQueue, Callback)
+		local Thread = nil
+
+		return Library.Toggle(Forms, Info, Settings[Flag], function(self, value)
+			Settings[Flag] = value
+			SaveManager:Save(Flag, value)
+			
+			if not UnQueue then
+				Enabled[Flag] = value
+
+				if value then
+					Thread = task.spawn(function()
+						if Threads[Flag] then Threads[Flag](Settings[Flag]) end
+					end)
+				else
+					if Thread then task.cancel(Thread) end
+				end
+			end
+			
+			if Callback then Callback(value) end
+		end)
+	end
+
+	function Components:Slider(Forms, Info, Value, Flag, Callback)
+		return Library.Slider(Forms, Info, Value[3], { Value[1], Value[2], Settings[Flag] }, function(value)
+			Settings[Flag] = value
+			SaveManager:Save(Flag, value)
+
+			if Callback then Callback(value) end
+		end)
+	end
+
+	function Components:Dropdown(Forms, Info, List, Maximum, Flag, Callback)
+		return Library.Dropdown(Forms, Info, { List, Maximum, Settings[Flag] }, function(value)
+			Settings[Flag] = value
+			SaveManager:Save(Flag, value)
+
+			if Callback then Callback(value) end
+		end)
+	end
+
+	function Components:Button(Forms, Info, Callback, State)
+        return Library.Button(Forms, Info, Info[3] or nil, Callback, State)
+	end
+
+	function Components:Textfield(Forms, Info, Flag, Callback)
+		return Library.Textfield(Forms, Info, Settings[Flag], function(value)
+			Settings[Flag] = value
+			SaveManager:Save(Flag, value)
+
+			if Callback then Callback(value) end
+		end)
+	end
+
+	do
+		function Components:Dashboard()
+			local Section = self:Section("Dashboard")
+			
+			local State = Components:MakeTab(Section, { "State", 134831414664674 }) do
+
+			end
+			
+			local Update = Components:MakeTab(Section, { "Tutorial", 134831414664674 }) do
+
+            end
+            
+            return State
+        end
+        
+        function Components:SetValue(index, value)
+            Library.app.Window[index] = value
+        end
+		
+		function Components:Managers()
+            local Section = self:Section("Managers")
+
+            local Optimize = self:MakeTab(Section, { "Optimize", 134831414664674 }) do
+                local _1 = self:NewPage(Optimize, { "Optimize", "Allows users to improve performance, efficiency" }) do
+
+                    Configurations:Default("White Screen", false)
+
+                    self:Toggle(_1, { "White Screen", "Disabled 3D Rendering to improve performance" }, "White Screen", true, function(value)
+                        Others.Optimize:Set3d(value)
+                    end)
+                    
+                    self:Button(_1, { "Fast Mode", "Set graphics quality to low", "Boost" }, function()
+                        Others.Optimize:Low()
+                    end)
+                end
+			end
+			
+            local Server = self:MakeTab(Section, { "Server", 105159951926712 }) do
+                local _1 = self:NewPage(Server, { "Server", "Allows users to join and change to target server." }) do
+                    
+                    Configurations:Default("JobId", JobId)
+                    
+                    self:Textfield(_1, { "Enter JobId", "Paste the target server JobId to join a specific server instance."  }, "JobId")
+
+                    self:Button(_1, { "Join", "Connect to the server using the provided JobId.", "Join" }, function()
+                        Others.Server:Join(Settings['JobId'])
+                    end)
+
+                    self:Button(_1, {  "Copy JobId", "Copy the current server JobId to your clipboard.", "Copy" }, function()
+                        pcall(setclipboard, JobId)
+                    end)
+
+                    self:Button(_1, { "Change Server", "Teleport to a different public server instance.", "Change" }, function()
+                        Others.Server:Change()
+                    end)
+
+                    self:Button(_1, { "Rejoin Server", "Reconnect to the current server instance.", "Rejoin" }, function()
+                        Others.Server:Rejoin()
+                    end)
+                end
+			end
+			
+            local Appearance = self:MakeTab(Section, { "Appearance", 92721515638108 }) do
+                local _1 = self:NewPage(Appearance, { "Theme", "Customize the overall look and visual style of the system." }) do
+                    
+                    Configurations:Default("Dark Mode", false)
+                    
+                    self:Toggle(_1, { "Dark Mode", "Dark Mode is a application appearance setting that uses a dark color palette to provide a comfortable viewing experience tailored for low-light environments." }, "Dark Mode", true, function(value)
+                        self:SetValue('Theme', value and Casecade.Themes.Dark or Casecade.Themes.Light)
+                    end)
+                end
+
+                local _2 = self:NewPage(Appearance, { "Input", "Configure input behavior and interaction settings." }) do
+                    
+                    Configurations:Default("Searchable", true)
+                    Configurations:Default("Draggable", true)
+                    Configurations:Default("Resizable", true)
+
+                    self:Toggle(_2, { "Searchable", "Allows pages to be searched using a text field in the title bar." }, "Resizable", true, function(value)
+                        self:SetValue('Searching', value)
+                    end)
+
+                    self:Toggle(_2, { "Draggable", "Allows users to move the window with a mouse or touch device." }, "Draggable", true, function(value)
+                        self:SetValue('Draggable', value)
+                    end)
+                    
+                    self:Toggle(_2, { "Resizable", "Allows users to resize the window with a mouse or touch device." }, "Resizable", true, function(value)
+                        self:SetValue('Resizable', value)
+                    end)
+                end
+
+                local _3 = self:NewPage(Appearance, { "Effects", "These effects may be resource intensive across different systems." }) do
+                    
+                    Configurations:Default("Shadow", true)
+                    Configurations:Default("Acrylic", false)
+                    
+                    self:Toggle(_3, { "Shadow", "Enables a dropshadow effect on the window." }, "Shadow", true, function(value)
+                        self:SetValue('Dropshadow', value)
+                    end)
+
+                    self:Toggle(_3, { "Acrylic", "Enables a UI background blur effect on the window." }, "Acrylic", true, function(value)
+                        self:SetValue('UIBlur', value)
+                    end)
+                end
+			end
+			
+            local Configs = self:MakeTab(Section, { "Configuration", 134261589888025 }) do
+                local _1 = self:NewPage(Configs, { "Configurations", "Manage and customize system configuration settings." }) do
+                    
+                end
+			end
+		end
+	end
+
+	return Components
+end)

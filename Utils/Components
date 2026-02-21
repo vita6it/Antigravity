@@ -14,7 +14,7 @@ return(function(Parallels, Casecade, Library, Others)
         return loadstring(game:HttpGet(URL))()
     end)
     
-    local Configs = Utils("Utils/Configurations")("Antigravity")
+    local Configs = Utils("vita6it", "Antigravity", "Utils/Configurations")("Antigravity")
     local Configurations = Configs.Configurations
 
 	local Enabled, Options = Parallels.FullOptions()

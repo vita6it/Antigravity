@@ -1,4 +1,4 @@
-return(function(Components, Configurations, Others, Casecade)
+return(function(Components, Configurations, Others, Casecade, Library)
     local Plugins = {}
     
     local SaveManager = Configurations.Configurations

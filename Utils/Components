@@ -1,5 +1,21 @@
-return(function(Parallels, Configurations, Settings, Casecade, Library, Others)
-    local Components = { NewTabs = true }
+return(function(Parallels, Casecade, Library, Others)
+    local _ENV = (getgenv or getrenv or getfenv)()
+
+    local Components = {
+        NewTabs = true
+    }
+    
+    local Utils = _ENV.Utils or (function(owner, repo, file)
+        local URL = string.format(
+            "https://raw.githubusercontent.com/%s/%s/main/%s",
+            owner, repo, file
+        )
+
+        return loadstring(game:HttpGet(URL))()
+    end)
+    
+    local Configs = Utils("Utils/Configurations")("Antigravity")
+    local Configurations = Configs.Configurations
 
 	local Enabled, Options = Parallels.FullOptions()
     local Threads = Parallels.Threads
@@ -39,8 +55,8 @@ return(function(Parallels, Configurations, Settings, Casecade, Library, Others)
 	function Components:Toggle(Forms, Info, Flag, UnQueue, Callback)
         local Thread = nil
 
-		return Library.Toggle(Forms, Info, Settings[Flag], function(self, value)
-			Settings[Flag] = value
+        return Library.Toggle(Forms, Info, Configs.Settings[Flag], function(self, value)
+            Configs.Settings[Flag] = value
 			Configurations:Save(Flag, value)
 			
 			if not UnQueue then
@@ -48,7 +64,7 @@ return(function(Parallels, Configurations, Settings, Casecade, Library, Others)
 
 				if value then
 					Thread = task.spawn(function()
-						if Threads[Flag] then Threads[Flag](Settings[Flag]) end
+                        if Threads[Flag] then Threads[Flag](Configs.Settings[Flag]) end
 					end)
 				else
 					if Thread then task.cancel(Thread) end
@@ -60,8 +76,8 @@ return(function(Parallels, Configurations, Settings, Casecade, Library, Others)
 	end
 
 	function Components:Slider(Forms, Info, Value, Flag, Callback)
-		return Library.Slider(Forms, Info, Value[3], { Value[1], Value[2], Settings[Flag] }, function(value)
-			Settings[Flag] = value
+        return Library.Slider(Forms, Info, Value[3], { Value[1], Value[2], Configs.Settings[Flag] }, function(value)
+            Configs.Settings[Flag] = value
 			Configurations:Save(Flag, value)
 
 			if Callback then Callback(value) end
@@ -69,8 +85,8 @@ return(function(Parallels, Configurations, Settings, Casecade, Library, Others)
 	end
 
 	function Components:Dropdown(Forms, Info, List, Maximum, Flag, Callback)
-		return Library.Dropdown(Forms, Info, { List, Maximum, Settings[Flag] }, function(value)
-			Settings[Flag] = value
+        return Library.Dropdown(Forms, Info, { List, Maximum, Configs.Settings[Flag] }, function(value)
+            Configs.Settings[Flag] = value
 			Configurations:Save(Flag, value)
 
 			if Callback then Callback(value) end
@@ -82,8 +98,8 @@ return(function(Parallels, Configurations, Settings, Casecade, Library, Others)
 	end
 
 	function Components:Textfield(Forms, Info, Flag, Callback)
-		return Library.Textfield(Forms, Info, Settings[Flag], function(self, value)
-			Settings[Flag] = value
+        return Library.Textfield(Forms, Info, Configs.Settings[Flag], function(self, value)
+            Configs.Settings[Flag] = value
 			Configurations:Save(Flag, value)
 
 			if Callback then Callback(value) end
@@ -137,7 +153,7 @@ return(function(Parallels, Configurations, Settings, Casecade, Library, Others)
                     Components:Textfield(_1, { "Enter JobId", "Paste the target server JobId to join a specific server instance."  }, "JobId")
 
                     Components:Button(_1, { "Join", "Connect to the server using the provided JobId.", "Join" }, function()
-                        Others.Server:Join(Settings['JobId'])
+                        Others.Server:Join(Configs.Settings['JobId'])
                     end)
 
                     Components:Button(_1, {  "Copy JobId", "Copy the current server JobId to your clipboard.", "Copy" }, function()
@@ -170,7 +186,7 @@ return(function(Parallels, Configurations, Settings, Casecade, Library, Others)
                     Configurations:Default("Draggable", true)
                     Configurations:Default("Resizable", true)
 
-                    Components:Toggle(_2, { "Searchable", "Allows pages to be searched using a text field in the title bar." }, "Resizable", true, function(value)
+                    Components:Toggle(_2, { "Searchable", "Allows pages to be searched using a text field in the title bar." }, "Searchable", true, function(value)
                         Plugins:SetValue('Searching', value)
                     end)
 
@@ -217,10 +233,12 @@ return(function(Parallels, Configurations, Settings, Casecade, Library, Others)
         Components.Plugins = Plugins
     end
     
-    Settings = Configurations:Load() 
+    Configs.Settings = Configurations:Load()
 
     return {
         Plugins = Components.Plugins,
+        Configurations = Configurations,
         Components = Components,
+        Settings = Configs.Settings
     }
 end)

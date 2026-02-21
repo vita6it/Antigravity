@@ -1,5 +1,5 @@
-return(function(Parallels, Configurations, Casecade, Library, Others)
-    local Components, Settings = { NewTabs = true }, {}
+return(function(Parallels, Configurations, Settings, Casecade, Library, Others)
+    local Components = { NewTabs = true }
 
 	local Enabled, Options = Parallels.FullOptions()
     local Threads = Parallels.Threads
@@ -222,6 +222,5 @@ return(function(Parallels, Configurations, Casecade, Library, Others)
     return {
         Plugins = Components.Plugins,
         Components = Components,
-        Settings = Settings,
     }
 end)

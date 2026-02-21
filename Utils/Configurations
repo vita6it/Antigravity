@@ -1,5 +1,5 @@
-return(function(Files: string)
-	local Configurations, Settings = {}, {}
+return(function(Files, Settings)
+	local Configurations = {}
 
 	local PlaceId = game.PlaceId
 	local HttpService = game:GetService('HttpService')

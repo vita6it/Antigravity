@@ -487,7 +487,6 @@ AddModule("Library", function()
         return Module
     end
 
-
     Library.Toggle = (function(Forms, Info, Value, Callback)
         local Module = Library.TextLabel(Forms, Info) do
             local Toggle = Module.Right():Toggle({
@@ -501,7 +500,7 @@ AddModule("Library", function()
         return Module.Toggle
     end)
 
-    Library.Slider = (function(Forms, Info, Rounding, Value, Callback)
+    Library.Slider = (function(Forms, Info, Value, Rounding, Callback)
         local Module = Library.TextLabel(Forms, Info) do
             local Text = Library.RightLabel(Module.Right(), "N/A")
             local Slider = Module.Right():Slider({
@@ -509,26 +508,25 @@ AddModule("Library", function()
                 Maximum = Value[2],
                 Value   = Value[3],
             })
-
+            
             Rounding = tonumber(Rounding) or 0
-
+            
             local factor = 10 ^ Rounding
-
+            
             local function Round(v)
                 return math.floor(v * factor + 0.5) / factor
             end
-
+            
             Slider.ValueChanged = function(self, value)
                 local rounded = Round(value)
                 Text.Text = tostring(rounded)
-
                 if Callback then Callback(self, rounded) end
             end
-
+            
             Module.Slider = Slider
             Text.Text = tostring(Round(Slider.Value or 0))
         end
-
+        
         return Module.Slider
     end)
 
@@ -727,10 +725,10 @@ AddModule("Plugins", function()
     end
 
     function Plugins:Slider(Forms, Info, Value, Flag, Callback)
-        return Library.Slider(Forms, Info, Value[3], { Value[1], Value[2], Settings[Flag] }, function(self, value)
+        return Library.Slider(Forms, Info, { Value[1], Value[2], Settings[Flag] }, Value[3], function(self, value)
             Settings[Flag] = value
             Configurations:Save(Flag, value)
-
+            
             if Callback then Callback(value) end
         end)
     end

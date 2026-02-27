@@ -395,11 +395,13 @@ return(function(Installer)
             local BladeHits = {}
 
             for _, List in ipairs(self:GetFolder()) do
-                for _, Enemy in pairs(List:GetChildren()) do
+                for _, Enemy in List:GetChildren() do
                     if Enemy == Closest then continue end
+                    
                     if not Module:IsAlive(Enemy) then continue end
 
                     local BasePart = Enemy:FindFirstChild("HumanoidRootPart")
+                    
                     if not BasePart then continue end
 
                     table.insert(BladeHits, { Enemy, BasePart })
@@ -413,22 +415,23 @@ return(function(Installer)
             RegisterAttack:FireServer(0.5)
 
             if HIT_FUNCTION then
-                print("HIT_FUNCTION", Target, Data)
                 return HIT_FUNCTION(Target, Data)
             end
             
-            print("RegisterHit", Target, Data)
             RegisterHit:FireServer(Target, Data)
         end
 
-        function Combat:Attack()
-            for _, List in ipairs(self:GetFolder()) do
-                for _, Enemy in pairs(List:GetChildren()) do
+        local function Attack()
+            for _, List in ipairs(Combat:GetFolder()) do
+                for _, Enemy in List:GetChildren() do
                     if Enemy == Character then continue end
+                    
                     if not Module:IsAlive(Enemy) then continue end
+                    
                     if Module:Distance(Enemy:GetPivot()) >= Combat.RANGE then continue end
 
                     local BasePart = Enemy:FindFirstChild("HumanoidRootPart")
+                    
                     if not BasePart then continue end
 
                     Combat:Fired(BasePart, Combat:Process(Enemy))
@@ -436,18 +439,21 @@ return(function(Installer)
             end
         end
 
-        function Combat:Slash(Tool)
+        local function Slash(Tool)
             local LeftClickRemote = Tool:FindFirstChild('LeftClickRemote')
             
             if not LeftClickRemote then return end
 
-            for _, List in ipairs(self:GetFolder()) do
-                for _, Enemy in pairs(List:GetChildren()) do
+            for _, List in ipairs(Combat:GetFolder()) do
+                for _, Enemy in List:GetChildren() do
                     if Enemy == Character then continue end
+                    
                     if not Module:IsAlive(Enemy) then continue end
+                    
                     if Module:Distance(Enemy:GetPivot()) >= Combat.RANGE then continue end
 
                     local BasePart = Enemy:FindFirstChild("HumanoidRootPart")
+                    
                     if not BasePart then continue end
 
                     local Unit = Module:Unit(BasePart)
@@ -464,24 +470,25 @@ return(function(Installer)
 
         Connect(RenderStepped, function()
             if not Configuration['Fast Attack'] then return end
+            
             if not IsAlive() then return end
 
             local Equipped = Character and Character:FindFirstChildOfClass("Tool")
+            
             if not Equipped then return end
 
             local Name = tostring(Equipped)
 
             if Name == 'Ice-Ice' or Name == 'Light-Light' then
-                return Combat:Attack()
+                return pcall(Attack)
             end
 
             if Equipped.ToolTip == 'Blox Fruit' then
-                return Combat:Slash(Equipped)
+                return pcall(Slash, Equipped)
             end
 
             if Equipped.ToolTip == 'Melee' or Equipped.ToolTip == 'Sword' then
-                Combat:Attack()
-                print("Attack")
+                return pcall(Attack)
             end
         end)
 
@@ -1901,7 +1908,6 @@ return(function(Installer)
             end
         end
     end)
-warn(1)
 
     return Module
 end)

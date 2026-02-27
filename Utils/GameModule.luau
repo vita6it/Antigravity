@@ -492,15 +492,13 @@ return(function(Installer)
 
             if not IsAlive() then return end
 
-            if not Backpack then return end
-
             local Equiped = Character and Character:FindFirstChildOfClass("Tool")
 
             if not Equiped then return end
 
             local Name = tostring(Equiped)
 
-            if Name == 'Ice-Ice' or Name == 'Light-Light' or Equiped.ToolTip ~= 'Blox Fruit' then
+            if (Name == 'Ice-Ice' or Name == 'Light-Light') or (Equiped.ToolTip == 'Melee' or Equiped.ToolTip == "Sword") then
                 return Combat:Attack()
             end
 
@@ -1774,6 +1772,8 @@ return(function(Installer)
     task.spawn(function()
         local SpawnLocations = Module.SpawnLocations
         local EnemyLocations = Module.EnemyLocations
+        
+        local EnemiesModule = Module.EnemiesModule
 
         local function NewIslandAdded(Island)
             if Island.Name:find("Island") then

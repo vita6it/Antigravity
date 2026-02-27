@@ -96,7 +96,6 @@ return(function(Installer)
     local fireclickdetector = fireclickdetector or empty
     local restorefunction = restorefunction or empty
     local hookfunction = hookfunction or empty
-    local getsenv = getsenv or empty
 
     local BRING_TAG = _ENV._Bring_Tag or tostring(math.random(80, 2e4))
     local KILLAURA_TAG = _ENV._KillAura_Tag or tostring(math.random(120, 2e4))
@@ -488,12 +487,11 @@ return(function(Installer)
         end
 
         Connect(RenderStepped, function()
-            if not Configuration['Fast Attack'] then return end
-            if not IsAlive() then return end
-            if not Backpack then return end
+            if not Configuration['Fast Attack'] then return print("Fas tattack is not enabled") end
+            if not IsAlive() then return print('not alive') end
 
             local Equiped = Character and Character:FindFirstChildOfClass("Tool")
-            if not Equiped then return end
+            if not Equiped then return print('Not tool') end
 
             local Name = tostring(Equiped)
 
@@ -506,10 +504,12 @@ return(function(Installer)
             end
 
             local Type = Equiped and (Equiped.ToolTip == 'Melee' or Equiped.ToolTip == 'Sword')
-            if not Type then return end
+            if not Type then return print('Not Type') end
 
             pcall(Attack)
         end)
+        
+        warn(1)
 
         return Combat
     end)

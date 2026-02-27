@@ -1719,6 +1719,58 @@ return(function(Installer)
         return SkillModule
     end)
 
+    AddModule("TweenCreator", function()
+        local TweenCreator = {}
+        TweenCreator.__index = TweenCreator
+
+        local tweens = {}
+        local EasingStyle = Enum.EasingStyle.Linear
+
+        function TweenCreator.new(obj, time, prop, value)
+            local self = setmetatable({}, TweenCreator)
+
+            self.tween = TweenService:Create(obj, TweenInfo.new(time, EasingStyle), { [prop] = value })
+            self.tween:Play()
+            self.value = value
+            self.object = obj
+
+            if tweens[obj] then
+                tweens[obj]:destroy()
+            end
+
+            tweens[obj] = self
+            return self
+        end
+
+        function TweenCreator:destroy()
+            self.tween:Pause()
+            self.tween:Destroy()
+
+            tweens[self.object] = nil
+            setmetatable(self, nil)
+        end
+
+        function TweenCreator:stopTween(obj)
+            if obj and tweens[obj] then
+                tweens[obj]:destroy()
+            end
+        end
+
+        return TweenCreator
+    end)
+    
+    AddModule("Colors", function()
+        return function(text, color)
+            if type(text) == "string" and typeof(color) == "Color3" then
+                local r, g, b = math.floor(color.R * 255), math.floor(color.G * 255), math.floor(color.B * 255)
+
+                return string.format('<font color="rgb(%d, %d, %d)">%s</font>', r, g, b, text)
+            end
+
+            return text
+        end
+    end)
+
     task.spawn(function()
         local SpawnLocations = Module.SpawnLocations
         local EnemyLocations = Module.EnemyLocations

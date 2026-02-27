@@ -727,7 +727,7 @@ AddModule("Plugins", function()
     end
 
     function Plugins:Slider(Forms, Info, Value, Flag, Callback)
-        return Library.Slider(Forms, Info, Value[3], { Value[1], Value[2], Settings[Flag] }, function(value)
+        return Library.Slider(Forms, Info, Value[3], { Value[1], Value[2], Settings[Flag] }, function(self, value)
             Settings[Flag] = value
             Configurations:Save(Flag, value)
 

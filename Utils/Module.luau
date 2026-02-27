@@ -726,12 +726,12 @@ AddModule("Plugins", function()
         return Toggle
     end
 
-    function Plugins:Slider(Forms, Info, Value, Flag, Callback, Rounding)
+    function Plugins:Slider(Forms, Info, Value, Flag, Callback)
         return Library.Slider(Forms, Info, { Value[1], Value[2], Settings[Flag] }, function(self, value)
             Settings[Flag] = value
             Configurations:Save(Flag, value)
             if Callback then Callback(value) end
-        end, Rounding)
+        end, Value[3])
     end
 
     function Plugins:Dropdown(Forms, Info, List, Maximum, Flag, Callback)

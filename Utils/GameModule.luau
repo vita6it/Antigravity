@@ -354,132 +354,120 @@ return(function(Installer)
 
     AddModule("Combat", function()
         local Combat = {
-            RANGE = 67
+            RANGE = 50,
+            HIT_FUNCTION = nil
         }
 
-        Combat.Slash = {} do
-            function Combat:Insert(Name, Data)
-                self.Slash[`{Name}-{Name}`] = function(Remote, Unit)
-                    Remote:FireServer(Unit, unpack(Data))
-                end
-            end
-
-            do
-                Combat:Insert("Control", { 1, true })
-            end
-        end
+        local Data = {
+            ['Control-Control'] = function(remote, Unit)
+                return remote:FireServer(Unit, 1, true)
+            end,
+        }
 
         local RegisterAttack = Net:WaitForChild("RE/RegisterAttack")
         local RegisterHit = Net:WaitForChild("RE/RegisterHit")
 
-        local HIT_FUNCTION; task.defer(function()
-            local LocalScript = PlayerScripts:FindFirstChildOfClass("LocalScript")
+        task.defer(function()
+            pcall(function()
+                local LocalScript = PlayerScripts:FindFirstChildOfClass("LocalScript")
 
-            while not LocalScript do
-                PlayerScripts.ChildAdded:Wait()
-                LocalScript = PlayerScripts:FindFirstChildOfClass("LocalScript")
-            end
-
-            if getsenv then
-                local Success, ScriptEnv = pcall(getsenv, LocalScript)
-
-                if Success and ScriptEnv then
-                    HIT_FUNCTION = ScriptEnv._G.SendHitsToServer
+                while not LocalScript do
+                    LocalPlayer.PlayerScripts.ChildAdded:Wait()
+                    LocalScript = PlayerScripts:FindFirstChildOfClass("LocalScript")
                 end
-            end
+
+                if getsenv then
+                    local Success, Environtment = pcall(getsenv, LocalScript)
+
+                    if Success and Environtment then
+                        if Environtment._G.SendHitsToServer then
+                            Combat.HIT_FUNCTION = Environtment._G.SendHitsToServer
+                        end
+                    end
+                end
+            end)
         end)
 
-        function Combat:GetFolder()
-            return { Enemies, Settings['Attack Players'] and Characters or nil }
-        end
-
-        function Combat:Process(Closest)
+        local function ProcessEnemy(Closet)
             local BladeHits = {}
 
-            local Folders = self:GetFolder()
-
-            for _, List in ipairs(Folders) do
-
-                if not List then continue end
-
-                for _, Enemy in List:GetChildren() do
-
-                    if Enemy == Closest then continue end
-
-                    if not Module:IsAlive(Enemy) then continue end
-
+            for _, Enemy in ipairs(Enemies:GetChildren()) do
+                if Enemy ~= Closet and Module:IsAlive(Enemy) then
                     local HumanoidRootPart = Enemy:FindFirstChild("HumanoidRootPart")
 
-                    if not HumanoidRootPart then continue end
+                    if HumanoidRootPart then
+                        table.insert(BladeHits, { Enemy, HumanoidRootPart })
+                    end
+                end
+            end
 
-                    table.insert(BladeHits, { Enemy, HumanoidRootPart })
+            if Settings['Attack Players'] then
+                for _, Enemy in ipairs(Characters:GetChildren()) do
+                    if Enemy ~= Closet and Module:IsAlive(Enemy) then
+                        local HumanoidRootPart = Enemy:FindFirstChild("HumanoidRootPart")
+
+                        if HumanoidRootPart then
+                            table.insert(BladeHits, { Enemy, HumanoidRootPart })
+                        end
+                    end
                 end
             end
 
             return BladeHits
         end
 
-        function Combat:Fired(Target, Data)
+        local function Fired(target, enemyData)
             RegisterAttack:FireServer(0.5)
 
-            if HIT_FUNCTION then
-                return HIT_FUNCTION(Target, Data)
+            if Combat.HIT_FUNCTION then
+                return Combat.HIT_FUNCTION(target, enemyData)
             end
 
-            RegisterHit:FireServer(Target, Data)
+            RegisterHit:FireServer(target, enemyData)
         end
 
-        function Combat:Attack()
-            local Folders = self:GetFolder()
+        local function Attack()
+            local Folders = { Enemies, Settings['Attack Players'] and Characters or nil }
 
-            for _, List in ipairs(Folders) do
+            for _, folder in ipairs(Folders) do
+                if not folder then continue end
 
-                if not List then continue end
+                for _, target in pairs(folder:GetChildren()) do
+                    if target == Character then continue end
+                    if not Module:IsAlive(target) then continue end
+                    if Module:Distance(target:GetPivot()) >= Combat.RANGE then continue end
 
-                for _, Enemy in List:GetChildren() do
+                    local rootPart = target:FindFirstChild("HumanoidRootPart")
+                    if not rootPart then continue end
 
-                    if Enemy == Character then continue end
-
-                    if not Module:IsAlive(Enemy) then continue end
-
-                    if Module:Distance(Enemy:GetPivot()) >= Combat.RANGE then continue end
-
-                    local HumanoidRootPart = Enemy:FindFirstChild("HumanoidRootPart")
-
-                    if not HumanoidRootPart then continue end
-
-                    Combat:Fired(HumanoidRootPart, Combat:Process(Enemy))
+                    Fired(rootPart, ProcessEnemy(target))
                 end
             end
         end
 
-        function Combat:Slash(Tool)
-            local LeftClickRemote = Tool:FindFirstChild('LeftClickRemote')
+        local function FruitAttack(a)
+            local LeftClickRemote = a:FindFirstChild('LeftClickRemote')
 
             if not LeftClickRemote then return end
 
-            local Folders = self:GetFolder()
+            local Folders = { Enemies, Settings['Attack Players'] and Characters or nil }
 
-            for _, List in ipairs(Folders) do
+            for _, folder in ipairs(Folders) do
+                if not folder then continue end
 
-                if not List then continue end
+                for _, target in pairs(folder:GetChildren()) do
+                    if target == Character then continue end
+                    if not Module:IsAlive(target) then continue end
 
-                for _, Enemy in List:GetChildren() do
+                    local rootPart = target:FindFirstChild("HumanoidRootPart")
+                    if not rootPart then continue end
 
-                    if Enemy == Character then continue end
+                    if Module:Distance(rootPart.Position) > Combat.RANGE then continue end
 
-                    if not Module:IsAlive(Enemy) then continue end
+                    local Unit = (rootPart.Position - HumanoidRootPart.Position).Unit
 
-                    if Module:Distance(Enemy:GetPivot()) >= Combat.RANGE then continue end
-
-                    local BasePart = Enemy:FindFirstChild("HumanoidRootPart")
-
-                    if not BasePart then continue end
-
-                    local Unit = Module:Unit(BasePart)
-
-                    if Data[tostring(Tool)] then
-                        Data[tostring(Tool)](LeftClickRemote, Unit)
+                    if Data[tostring(a)] then
+                        Data[tostring(a)](LeftClickRemote, Unit)
                     else
                         LeftClickRemote:FireServer(Unit, 1)
                     end
@@ -487,22 +475,41 @@ return(function(Installer)
             end
         end
 
+        local function GetWeapons(a, Tip)
+            if not IsAlive() then return end
+
+            for _, Tool in a:GetChildren() do
+                if Tool:IsA("Tool") and Tool.ToolTip == Tip then
+                    return Tool
+                end
+            end
+
+            return nil
+        end
+
         Connect(RenderStepped, function()
             if not Settings['Fast Attack'] then return end
-
+            
             if not IsAlive() then return end
 
             local Equiped = Character and Character:FindFirstChildOfClass("Tool")
-
+            
             if not Equiped then return end
 
             local Name = tostring(Equiped)
 
-            if (Name == 'Ice-Ice' or Name == 'Light-Light') or (Equiped.ToolTip == 'Melee' or Equiped.ToolTip == "Sword") then
-                return Combat:Attack()
+            if Name == 'Ice-Ice' or Name == 'Light-Light' then
+                return pcall(Attack)
             end
 
-            return Combat:Slash(Equiped)
+            if Equiped.ToolTip == 'Blox Fruit' then
+                return pcall(FruitAttack, Equiped)
+            end
+
+            local Type = Equiped and (Equiped.ToolTip == 'Melee' or Equiped.ToolTip == 'Sword')
+            if not Type then return end
+
+            pcall(Attack)
         end)
 
         return Combat

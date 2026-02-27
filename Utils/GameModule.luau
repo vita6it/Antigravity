@@ -395,16 +395,14 @@ return(function(Installer)
             local BladeHits = {}
 
             for _, List in ipairs(self:GetFolder()) do
-                if not List then continue end
-
-                for _, Enemy in List:GetChildren() do
+                for _, Enemy in pairs(List:GetChildren()) do
                     if Enemy == Closest then continue end
                     if not Module:IsAlive(Enemy) then continue end
 
-                    local HumanoidRootPart = Enemy:FindFirstChild("HumanoidRootPart")
-                    if not HumanoidRootPart then continue end
+                    local BasePart = Enemy:FindFirstChild("HumanoidRootPart")
+                    if not BasePart then continue end
 
-                    table.insert(BladeHits, { Enemy, HumanoidRootPart })
+                    table.insert(BladeHits, { Enemy, BasePart })
                 end
             end
 
@@ -415,39 +413,36 @@ return(function(Installer)
             RegisterAttack:FireServer(0.5)
 
             if HIT_FUNCTION then
-                print("HIT_FUNCTION")
+                print("HIT_FUNCTION", Target, Data)
                 return HIT_FUNCTION(Target, Data)
             end
             
-            print("RegisterHit")
+            print("RegisterHit", Target, Data)
             RegisterHit:FireServer(Target, Data)
         end
 
         function Combat:Attack()
             for _, List in ipairs(self:GetFolder()) do
-                if not List then continue end
-
-                for _, Enemy in List:GetChildren() do
+                for _, Enemy in pairs(List:GetChildren()) do
                     if Enemy == Character then continue end
                     if not Module:IsAlive(Enemy) then continue end
                     if Module:Distance(Enemy:GetPivot()) >= Combat.RANGE then continue end
 
-                    local HumanoidRootPart = Enemy:FindFirstChild("HumanoidRootPart")
-                    if not HumanoidRootPart then continue end
+                    local BasePart = Enemy:FindFirstChild("HumanoidRootPart")
+                    if not BasePart then continue end
 
-                    Combat:Fired(HumanoidRootPart, Combat:Process(Enemy))
+                    Combat:Fired(BasePart, Combat:Process(Enemy))
                 end
             end
         end
 
         function Combat:Slash(Tool)
             local LeftClickRemote = Tool:FindFirstChild('LeftClickRemote')
+            
             if not LeftClickRemote then return end
 
             for _, List in ipairs(self:GetFolder()) do
-                if not List then continue end
-
-                for _, Enemy in List:GetChildren() do
+                for _, Enemy in pairs(List:GetChildren()) do
                     if Enemy == Character then continue end
                     if not Module:IsAlive(Enemy) then continue end
                     if Module:Distance(Enemy:GetPivot()) >= Combat.RANGE then continue end
@@ -1906,6 +1901,7 @@ return(function(Installer)
             end
         end
     end)
+warn(1)
 
     return Module
 end)

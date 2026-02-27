@@ -489,20 +489,28 @@ return(function(Installer)
 
         Connect(RenderStepped, function()
             if not Configuration['Fast Attack'] then return end
-
+            
             if not IsAlive() then return end
 
             local Equiped = Character and Character:FindFirstChildOfClass("Tool")
-
+            
             if not Equiped then return end
 
             local Name = tostring(Equiped)
 
-            if (Name == 'Ice-Ice' or Name == 'Light-Light') or (Equiped.ToolTip == 'Melee' or Equiped.ToolTip == "Sword") then
+            if Name == 'Ice-Ice' or Name == 'Light-Light' then
                 return Combat:Attack()
             end
 
-            return Combat:Slash(Equiped)
+            if Equiped.ToolTip == 'Blox Fruit' then
+                return Combat:Slash(Equiped)
+            end
+
+            local Type = Equiped and (Equiped.ToolTip == 'Melee' or Equiped.ToolTip == 'Sword')
+            
+            if not Type then return end
+
+            Combat:Attack()
         end)
 
         return Combat

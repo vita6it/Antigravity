@@ -387,21 +387,18 @@ return(function(Installer)
             end
         end)
 
-        function Combat:GetFolder()
-            return { Enemies, Configuration['Attack Players'] and Characters or nil }
-        end
-
         function Combat:Process(Closest)
             local BladeHits = {}
+            local FOLDER = { Enemies, Configuration['Attack Players'] and Characters or nil }
 
-            for _, List in ipairs(self:GetFolder()) do
+            for _, List in ipairs(FOLDER) do
                 for _, Enemy in List:GetChildren() do
                     if Enemy == Closest then continue end
-                    
+
                     if not Module:IsAlive(Enemy) then continue end
 
                     local BasePart = Enemy:FindFirstChild("HumanoidRootPart")
-                    
+
                     if not BasePart then continue end
 
                     table.insert(BladeHits, { Enemy, BasePart })
@@ -417,21 +414,23 @@ return(function(Installer)
             if HIT_FUNCTION then
                 return HIT_FUNCTION(Target, Data)
             end
-            
+
             RegisterHit:FireServer(Target, Data)
         end
 
         local function Attack()
-            for _, List in ipairs(Combat:GetFolder()) do
+            local FOLDER = { Enemies, Configuration['Attack Players'] and Characters or nil }
+
+            for _, List in ipairs(FOLDER) do
                 for _, Enemy in List:GetChildren() do
                     if Enemy == Character then continue end
-                    
+
                     if not Module:IsAlive(Enemy) then continue end
-                    
+
                     if Module:Distance(Enemy:GetPivot()) >= Combat.RANGE then continue end
 
                     local BasePart = Enemy:FindFirstChild("HumanoidRootPart")
-                    
+
                     if not BasePart then continue end
 
                     Combat:Fired(BasePart, Combat:Process(Enemy))
@@ -441,19 +440,21 @@ return(function(Installer)
 
         local function Slash(Tool)
             local LeftClickRemote = Tool:FindFirstChild('LeftClickRemote')
-            
+
             if not LeftClickRemote then return end
 
-            for _, List in ipairs(Combat:GetFolder()) do
+            local FOLDER = { Enemies, Configuration['Attack Players'] and Characters or nil }
+
+            for _, List in ipairs(FOLDER) do
                 for _, Enemy in List:GetChildren() do
                     if Enemy == Character then continue end
-                    
+
                     if not Module:IsAlive(Enemy) then continue end
-                    
+
                     if Module:Distance(Enemy:GetPivot()) >= Combat.RANGE then continue end
 
                     local BasePart = Enemy:FindFirstChild("HumanoidRootPart")
-                    
+
                     if not BasePart then continue end
 
                     local Unit = Module:Unit(BasePart)
@@ -470,11 +471,11 @@ return(function(Installer)
 
         Connect(RenderStepped, function()
             if not Configuration['Fast Attack'] then return end
-            
+
             if not IsAlive() then return end
 
             local Equipped = Character and Character:FindFirstChildOfClass("Tool")
-            
+
             if not Equipped then return end
 
             local Name = tostring(Equipped)
@@ -1743,7 +1744,7 @@ return(function(Installer)
 
         return TweenCreator
     end)
-    
+
     AddModule("Colors", function()
         return function(text, color)
             if type(text) == "string" and typeof(color) == "Color3" then
@@ -1759,7 +1760,7 @@ return(function(Installer)
     task.spawn(function()
         local SpawnLocations = Module.SpawnLocations
         local EnemyLocations = Module.EnemyLocations
-        
+
         local EnemiesModule = Module.EnemiesModule
 
         local function NewIslandAdded(Island)

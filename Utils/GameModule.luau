@@ -10,8 +10,9 @@ return(function(Installer)
 
     local Owner = "vita6it"
     local Repository = "Antigravity"
-
+    
     local Configuration = Installer.Configurations
+    local Settings = Installer.Settings
     local Connect = Installer.Connect
 
     local function fetch(owner, repo, file)
@@ -220,13 +221,13 @@ return(function(Installer)
 
             pcall(sethiddenproperty, LocalPlayer, "SimulationRadius", math.huge)
 
-            if Distance or Configuration['Enabled Bring'] then
+            if Distance or Settings['Enabled Bring'] then
                 Module.IsSuperBring = SuperBring and true or false
 
                 local Name = ToEnemy.Name
                 local BringPositionTag = SuperBring and "ALL_MOBS" or Name
                 local Target = CustomCFrame or ToEnemy.PrimaryPart.CFrame
-                local MaxDistance = Distance or Configuration['Bring Distance']
+                local MaxDistance = Distance or Settings['Bring Distance']
 
                 if not Cached.Bring[BringPositionTag] or (Target.Position - Cached.Bring[BringPositionTag].Position).Magnitude > 25 then
                     Cached.Bring[BringPositionTag] = Target
@@ -330,7 +331,7 @@ return(function(Installer)
 
         function Aimbot:Check()
             for _,v in pairs(self._index) do
-                if Configuration[v] == true then
+                if Settings[v] == true then
                     return true 
                 end 
             end 
@@ -353,120 +354,132 @@ return(function(Installer)
 
     AddModule("Combat", function()
         local Combat = {
-            RANGE = 50,
-            HIT_FUNCTION = nil
+            RANGE = 67
         }
 
-        local Data = {
-            ['Control-Control'] = function(remote, Unit)
-                return remote:FireServer(Unit, 1, true)
-            end,
-        }
+        Combat.Slash = {} do
+            function Combat:Insert(Name, Data)
+                self.Slash[`{Name}-{Name}`] = function(Remote, Unit)
+                    Remote:FireServer(Unit, unpack(Data))
+                end
+            end
+
+            do
+                Combat:Insert("Control", { 1, true })
+            end
+        end
 
         local RegisterAttack = Net:WaitForChild("RE/RegisterAttack")
         local RegisterHit = Net:WaitForChild("RE/RegisterHit")
 
-        task.defer(function()
-            pcall(function()
-                local LocalScript = PlayerScripts:FindFirstChildOfClass("LocalScript")
+        local HIT_FUNCTION; task.defer(function()
+            local LocalScript = PlayerScripts:FindFirstChildOfClass("LocalScript")
 
-                while not LocalScript do
-                    LocalPlayer.PlayerScripts.ChildAdded:Wait()
-                    LocalScript = PlayerScripts:FindFirstChildOfClass("LocalScript")
-                end
-
-                if getsenv then
-                    local Success, Environtment = pcall(getsenv, LocalScript)
-
-                    if Success and Environtment then
-                        if Environtment._G.SendHitsToServer then
-                            Combat.HIT_FUNCTION = Environtment._G.SendHitsToServer
-                        end
-                    end
-                end
-            end)
-        end)
-
-        local function ProcessEnemy(Closet)
-            local BladeHits = {}
-
-            for _, Enemy in ipairs(Enemies:GetChildren()) do
-                if Enemy ~= Closet and Module:IsAlive(Enemy) then
-                    local HumanoidRootPart = Enemy:FindFirstChild("HumanoidRootPart")
-
-                    if HumanoidRootPart then
-                        table.insert(BladeHits, { Enemy, HumanoidRootPart })
-                    end
-                end
+            while not LocalScript do
+                PlayerScripts.ChildAdded:Wait()
+                LocalScript = PlayerScripts:FindFirstChildOfClass("LocalScript")
             end
 
-            if Configuration['Attack Players'] then
-                for _, Enemy in ipairs(Characters:GetChildren()) do
-                    if Enemy ~= Closet and Module:IsAlive(Enemy) then
-                        local HumanoidRootPart = Enemy:FindFirstChild("HumanoidRootPart")
+            if getsenv then
+                local Success, ScriptEnv = pcall(getsenv, LocalScript)
 
-                        if HumanoidRootPart then
-                            table.insert(BladeHits, { Enemy, HumanoidRootPart })
-                        end
-                    end
+                if Success and ScriptEnv then
+                    HIT_FUNCTION = ScriptEnv._G.SendHitsToServer
+                end
+            end
+        end)
+
+        function Combat:GetFolder()
+            return { Enemies, Settings['Attack Players'] and Characters or nil }
+        end
+
+        function Combat:Process(Closest)
+            local BladeHits = {}
+
+            local Folders = self:GetFolder()
+
+            for _, List in ipairs(Folders) do
+
+                if not List then continue end
+
+                for _, Enemy in List:GetChildren() do
+
+                    if Enemy == Closest then continue end
+
+                    if not Module:IsAlive(Enemy) then continue end
+
+                    local HumanoidRootPart = Enemy:FindFirstChild("HumanoidRootPart")
+
+                    if not HumanoidRootPart then continue end
+
+                    table.insert(BladeHits, { Enemy, HumanoidRootPart })
                 end
             end
 
             return BladeHits
         end
 
-        local function Fired(target, enemyData)
+        function Combat:Fired(Target, Data)
             RegisterAttack:FireServer(0.5)
 
-            if Combat.HIT_FUNCTION then
-                return Combat.HIT_FUNCTION(target, enemyData)
+            if HIT_FUNCTION then
+                return HIT_FUNCTION(Target, Data)
             end
 
-            RegisterHit:FireServer(target, enemyData)
+            RegisterHit:FireServer(Target, Data)
         end
 
-        local function Attack()
-            local Folders = { Enemies, Configuration['Attack Players'] and Characters or nil }
+        function Combat:Attack()
+            local Folders = self:GetFolder()
 
-            for _, folder in ipairs(Folders) do
-                if not folder then continue end
+            for _, List in ipairs(Folders) do
 
-                for _, target in pairs(folder:GetChildren()) do
-                    if target == Character then continue end
-                    if not Module:IsAlive(target) then continue end
-                    if Module:Distance(target:GetPivot()) >= Combat.RANGE then continue end
+                if not List then continue end
 
-                    local rootPart = target:FindFirstChild("HumanoidRootPart")
-                    if not rootPart then continue end
+                for _, Enemy in List:GetChildren() do
 
-                    Fired(rootPart, ProcessEnemy(target))
+                    if Enemy == Character then continue end
+
+                    if not Module:IsAlive(Enemy) then continue end
+
+                    if Module:Distance(Enemy:GetPivot()) >= Combat.RANGE then continue end
+
+                    local HumanoidRootPart = Enemy:FindFirstChild("HumanoidRootPart")
+
+                    if not HumanoidRootPart then continue end
+
+                    Combat:Fired(HumanoidRootPart, Combat:Process(Enemy))
                 end
             end
         end
 
-        local function FruitAttack(a)
-            local LeftClickRemote = a:FindFirstChild('LeftClickRemote')
+        function Combat:Slash(Tool)
+            local LeftClickRemote = Tool:FindFirstChild('LeftClickRemote')
 
             if not LeftClickRemote then return end
 
-            local Folders = { Enemies, Configuration['Attack Players'] and Characters or nil }
+            local Folders = self:GetFolder()
 
-            for _, folder in ipairs(Folders) do
-                if not folder then continue end
+            for _, List in ipairs(Folders) do
 
-                for _, target in pairs(folder:GetChildren()) do
-                    if target == Character then continue end
-                    if not Module:IsAlive(target) then continue end
+                if not List then continue end
 
-                    local rootPart = target:FindFirstChild("HumanoidRootPart")
-                    if not rootPart then continue end
+                for _, Enemy in List:GetChildren() do
 
-                    if Module:Distance(rootPart.Position) > Combat.RANGE then continue end
+                    if Enemy == Character then continue end
 
-                    local Unit = (rootPart.Position - HumanoidRootPart.Position).Unit
+                    if not Module:IsAlive(Enemy) then continue end
 
-                    if Data[tostring(a)] then
-                        Data[tostring(a)](LeftClickRemote, Unit)
+                    if Module:Distance(Enemy:GetPivot()) >= Combat.RANGE then continue end
+
+                    local BasePart = Enemy:FindFirstChild("HumanoidRootPart")
+
+                    if not BasePart then continue end
+
+                    local Unit = Module:Unit(BasePart)
+
+                    if Data[tostring(Tool)] then
+                        Data[tostring(Tool)](LeftClickRemote, Unit)
                     else
                         LeftClickRemote:FireServer(Unit, 1)
                     end
@@ -474,42 +487,23 @@ return(function(Installer)
             end
         end
 
-        local function GetWeapons(a, Tip)
+        Connect(RenderStepped, function()
+            if not Settings['Fast Attack'] then return end
+
             if not IsAlive() then return end
 
-            for _, Tool in a:GetChildren() do
-                if Tool:IsA("Tool") and Tool.ToolTip == Tip then
-                    return Tool
-                end
-            end
-
-            return nil
-        end
-
-        Connect(RenderStepped, function()
-            if not Configuration['Fast Attack'] then return print("Fas tattack is not enabled") end
-            if not IsAlive() then return print('not alive') end
-
             local Equiped = Character and Character:FindFirstChildOfClass("Tool")
-            if not Equiped then return print('Not tool') end
+
+            if not Equiped then return end
 
             local Name = tostring(Equiped)
 
-            if Name == 'Ice-Ice' or Name == 'Light-Light' then
-                return pcall(Attack)
+            if (Name == 'Ice-Ice' or Name == 'Light-Light') or (Equiped.ToolTip == 'Melee' or Equiped.ToolTip == "Sword") then
+                return Combat:Attack()
             end
 
-            if Equiped.ToolTip == 'Blox Fruit' then
-                return pcall(FruitAttack, Equiped)
-            end
-
-            local Type = Equiped and (Equiped.ToolTip == 'Melee' or Equiped.ToolTip == 'Sword')
-            if not Type then return print('Not Type') end
-
-            pcall(Attack)
+            return Combat:Slash(Equiped)
         end)
-        
-        warn(1)
 
         return Combat
     end)
@@ -840,7 +834,7 @@ return(function(Installer)
 
                 local Target = Cached.Bring[Module.IsSuperBring and "ALL_MOBS" or EnemyName]
 
-                if Target and (Target.Position - RootPart.Position).Magnitude <= Configuration["Bring Distance"] then
+                if Target and (Target.Position - RootPart.Position).Magnitude <= Settings["Bring Distance"] then
                     if AlignPosition.Position ~= Target.Position then
                         AlignPosition.Position = Target.Position
                     end
@@ -1316,7 +1310,7 @@ return(function(Installer)
         }
 
         function Ocean:Zone()
-            local Coords = ZoneCoordinates[Configuration['Select Zone']]
+            local Coords = ZoneCoordinates[Settings['Select Zone']]
 
             if Coords then
                 return CFrame.new(Coords[1], 100, Coords[2])
@@ -1475,10 +1469,10 @@ return(function(Installer)
 
         local function GetEnabledSkills()
             return {
-                ['Melee'] = Configuration['Melee'] or { "Z", "X", "C" },
-                ['Sword'] = Configuration['Sword'] or { "Z", "X" },
-                ['Gun'] = Configuration['Gun'] or { "Z", "X" },
-                ['Blox Fruit'] = Configuration['Blox Fruit'] or { "Z", "X", "C" }
+                ['Melee'] = Settings['Melee'] or { "Z", "X", "C" },
+                ['Sword'] = Settings['Sword'] or { "Z", "X" },
+                ['Gun'] = Settings['Gun'] or { "Z", "X" },
+                ['Blox Fruit'] = Settings['Blox Fruit'] or { "Z", "X", "C" }
             }
         end
 
@@ -1808,7 +1802,7 @@ return(function(Installer)
                 Teleport(spawnCFrame)
 
                 local waitStart = tick()
-                local waitDelay = Configuration['Wait Enemies Delay'] or 0.75
+                local waitDelay = Settings['Wait Enemies Delay'] or 0.75
 
                 while tick() - waitStart < waitDelay do
                     if ShouldStop(Breake) then return end

@@ -689,8 +689,8 @@ AddModule("Plugins", function()
 
     function Plugins:TextLabel(Forms, Info, Mode)
         if Mode == "r" then
-            Library.TextLabel(Forms, Info) do
-                return Library.RightLabel(Info[3] or "N/A") 
+            local TextLabel = Library.TextLabel(Forms, Info) do
+                return Library.RightLabel(TextLabel.Right(), Info[3] or "N/A") 
             end
         end
 

@@ -1039,21 +1039,26 @@ return(function(Installer)
             ['Items'] = {},
         }
         
-        do
+        do 
             Cache._CountSignals = {}
+            Cache._CountData = {}
 
             Cache.Count = setmetatable({}, {
-                __index = function(_, key) return 0 end,
-                __newindex = function(self, key, value)
-                    local old = rawget(self, key) do
-                        rawset(self, key, value) 
-                    end
+                __index = function(_, key)
+                    return Cache._CountData[key] or 0
+                end,
+                __newindex = function(_, key, value)
+                    print('__newindex')
+                    local old = Cache._CountData[key] or 0
 
                     if old ~= value then
+                        Cache._CountData[key] = value
+
                         local signal = Cache._CountSignals[key]
-                        
                         if signal then
                             signal:Fire(value, old)
+                        else
+                            print('No _CountSignals')
                         end
                     end
                 end

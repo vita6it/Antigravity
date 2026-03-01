@@ -1048,17 +1048,15 @@ return(function(Installer)
                     return Cache._CountData[key] or 0
                 end,
                 __newindex = function(_, key, value)
-                    print('__newindex')
                     local old = Cache._CountData[key] or 0
 
                     if old ~= value then
                         Cache._CountData[key] = value
 
                         local signal = Cache._CountSignals[key]
+                        
                         if signal then
                             signal:Fire(value, old)
-                        else
-                            print('No _CountSignals')
                         end
                     end
                 end

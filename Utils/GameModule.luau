@@ -10,7 +10,7 @@ return(function(Installer)
 
     local Owner = "vita6it"
     local Repository = "Antigravity"
-    
+
     local Configuration = Installer.Configurations
     local Settings = Installer.Settings
     local Connect = Installer.Connect
@@ -489,11 +489,11 @@ return(function(Installer)
 
         Connect(RenderStepped, function()
             if not Settings['Fast Attack'] then return end
-            
+
             if not IsAlive() then return end
 
             local Equiped = Character and Character:FindFirstChildOfClass("Tool")
-            
+
             if not Equiped then return end
 
             local Name = tostring(Equiped)
@@ -878,6 +878,59 @@ return(function(Installer)
         return EnemiesModule
     end)
 
+    AddModule("Signal", function()
+        local Signal = {}
+        local Connection = {}
+
+        Connection.__index = Connection
+        Signal.__index = Signal
+
+        function Connection:Disconnect()
+            if not self.Connected then
+                return
+            end
+
+            local find = table.find(self.Signal._connections, self)
+            if find then
+                table.remove(self.Signal._connections, find)
+            end
+
+            self.Function = nil
+            self.Connected = false
+        end
+
+        function Connection:Fire(...)
+            if self.Function then
+                task.spawn(self.Function, ...)
+            end
+        end
+
+        function Signal.new()
+            return setmetatable({
+                _connections = {}
+            }, Signal)
+        end
+
+        function Signal:Connect(fn)
+            local connection = setmetatable({
+                Signal = self,
+                Function = fn,
+                Connected = true
+            }, Connection)
+
+            table.insert(self._connections, connection)
+            return connection
+        end
+
+        function Signal:Fire(...)
+            for _, connection in ipairs(self._connections) do
+                connection:Fire(...)
+            end
+        end
+
+        return Signal
+    end)
+
     AddModule("BodyVelocity", function()
         local BodyVelocity = Instance.new("BodyVelocity") do
             BodyVelocity.Velocity = Vector3.zero
@@ -982,19 +1035,45 @@ return(function(Installer)
         local Cache = {
             ['Unlocked'] = setmetatable({}, { __index = function() return false end }),
             ['Mastery'] = setmetatable({}, { __index = function() return 0 end }),
-            ['Count'] = setmetatable({}, { __index = function() return 0 end }),
             ['MasteryRequirements'] = {},
             ['Items'] = {},
         }
+        
+        do
+            Cache._CountSignals = {}
 
-        function Cache:Counts(str)
-            return self.Count[str]
+            Cache.Count = setmetatable({}, {
+                __index = function(_, key) return 0 end,
+                __newindex = function(self, key, value)
+                    local old = rawget(self, key) do
+                        rawset(self, key, value) 
+                    end
+
+                    if old ~= value then
+                        local signal = Cache._CountSignals[key]
+                        
+                        if signal then
+                            signal:Fire(value, old)
+                        end
+                    end
+                end
+            })
+
+            function Cache:GetInventoryChanged(key)
+                if not self._CountSignals[key] then
+                    self._CountSignals[key] = Module.Signal.new()
+                end
+                
+                return self._CountSignals[key]
+            end
+            
+            function Cache:Counts(str)
+                return self.Count[str]
+            end
         end
 
         function Cache:HaveFruit()
             if not IsAlive() then return end
-
-            if not Backpack then return end
 
             for _, v in Backpack:GetChildren() do
                 if string.find(v.Name,"Fruit") then
@@ -1766,7 +1845,7 @@ return(function(Installer)
             return text
         end
     end)
-    
+
     AddModule("Data", function()
         local Data = {}
 

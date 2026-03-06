@@ -1010,7 +1010,7 @@ function Library:Window(Args)
                 Rotation = 90
             })
 
-            return Right
+            return Title_1
         end
 
         function Page:Button(Args)

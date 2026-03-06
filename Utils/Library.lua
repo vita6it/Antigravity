@@ -971,6 +971,48 @@ function Library:Window(Args)
             return Attribute
         end
 
+        function Page:RightLabel(Args)
+            local Title = Args.Title
+            local Desc = Args.Desc
+            local RightText = Args.Right or "None"
+
+            local Rows = Library:NewRows(PageScrolling_1, Title, Desc)
+
+            local Right = Rows.Vectorize.Right
+
+            local Title_1 = Library:Create("TextLabel", {
+                Name = "Title",
+                Parent = Right,
+                AnchorPoint = Vector2.new(0.5, 0.5),
+                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                BackgroundTransparency = 1,
+                BorderSizePixel = 0,
+                LayoutOrder = -1,
+                Position = UDim2.new(0.5, 0, 0.5, 0),
+                Size = UDim2.new(1, 0, 0, 13),
+                Selectable = false,
+                Font = Enum.Font.GothamSemibold,
+                RichText = true,
+                Text = RightText,
+                TextColor3 = Color3.fromRGB(255, 255, 255),
+                TextSize = 12,
+                TextStrokeTransparency = 0.699999988079071,
+                TextXAlignment = Enum.TextXAlignment.Right
+            })
+
+            Library:Create("UIGradient", {
+                Parent = Title_1,
+                Color = ColorSequence.new{
+                    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+                    ColorSequenceKeypoint.new(0.749568, Color3.fromRGB(163, 163, 163)),
+                    ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 100, 100))
+                },
+                Rotation = 90
+            })
+
+            return Right
+        end
+
         function Page:Button(Args)
             local Title = Args.Title
             local Desc = Args.Desc

@@ -555,7 +555,7 @@ function Library:Window(Args)
         Rotation = 90
     })
 
-    Library:Create("TextLabel", {
+    local THETIME = Library:Create("TextLabel", {
         Name = "Time",
         Parent = Info_2,
         AnchorPoint = Vector2.new(0.5, 0.5),
@@ -574,6 +574,8 @@ function Library:Window(Args)
         TextTransparency = 0.6,
         TextXAlignment = Enum.TextXAlignment.Right
     })
+    
+    
 
     -- Scale (body)
     local Scale_1 = Library:Create("Frame", {
@@ -2154,17 +2156,12 @@ function Library:Window(Args)
                 Scale = if Mobile then 1 else WindowSize
             })
             
-            function Library:SizeSlider(Page)
-                return Page:Slider({
-                    Title = "Interface Scaler",
-                    Min = 1,
-                    Max = 2,
-                    Value = if Mobile then 1 else WindowSize,
-                    Rounding = 2,
-                    Callback = function(value)
-                        Scaler.Scale = value
-                    end,
-                })
+            function Library:SizeSlider(Page, Plugins)
+                return Plugins:Slider(Page, "Interface Scaler", { 1, 2, 2 }, "Interface Scaler")
+            end
+            
+            function Library:SetTimeValue(Value)
+                THETIME.Text = Value
             end
         end
 

@@ -894,7 +894,7 @@ function Library:Window(Args)
                 LayoutOrder = 0,
                 Position = UDim2.new(0.5, 0, 0.5, 0),
                 Size = UDim2.new(1, 0, 0, 20),
-                Font = Enum.Font.GothamSemibold,
+                Font = Enum.Font.GothamBold,
                 RichText = true,
                 Text = " " .. Text,
                 TextColor3 = Color3.fromRGB(255, 255, 255),

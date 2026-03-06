@@ -25,7 +25,7 @@ local function AddModule(Name, Module)
     end
 end
 
-local Cascade = fetch("Utils/Cascade")
+local Library = fetch("Utils/Library.lua")
 
 local TeleportService = game:GetService('TeleportService')
 local HttpService = game:GetService('HttpService')
@@ -35,6 +35,8 @@ local Players = game:GetService('Players')
 local LocalPlayer = Players.LocalPlayer
 local PlaceId = game.PlaceId
 local JobId = game.JobId
+
+Utils.Library = Library
 
 AddModule("Connections", function()
     local Connections = {}
@@ -127,6 +129,45 @@ AddModule("Configurations", function()
     return Configurations
 end)
 
+AddModule("Asset", function()
+    local Asset = {}
+
+    local getcustomasset = getcustomasset or function(...) return ... end
+
+    local saved = {}
+
+    function Asset:Download(url, filename)
+        local data = game:HttpGet(url)
+
+        writefile(filename, data)
+
+        saved[filename] = data
+
+        return data
+    end
+
+    function Asset:Get(filename)
+        if saved[filename] then
+            return getcustomasset(filename)
+        end
+
+        if isfile(filename) then
+            saved[filename] = readfile(filename)
+            return getcustomasset(filename)
+        end
+
+        return 0
+    end
+
+    do
+        if not isfile("Q613L20.png") then
+            Asset:Download("https://raw.githubusercontent.com/vita6it/Antigravity/main/assets/xova.png", "Q613L20.png") 
+        end
+    end
+
+    return Asset
+end)
+
 AddModule("Others", function()
     local Others = {}
 
@@ -214,15 +255,15 @@ AddModule("Parallels", function()
         local function ShowErrorMessage(ErrorMessage)
             _ENV.ISLOADED = false
             _ENV.OnFarm = false
-            
+
             local text = (`error [ { _ENV.RunningOption or "Null" } ] { ErrorMessage }`)
-            
+
             if _ENV.error_message then
                 _ENV.error_message.Text ..= `\n\n{ text }`
-                
+
                 return nil
             end
-            
+
             local Message = Instance.new("Message", workspace) do
                 _ENV.error_message = Message
                 Message.Text = text
@@ -233,20 +274,20 @@ AddModule("Parallels", function()
             local Success, ErrorMessage = pcall(function()
                 local function GetQueue()
                     for _, Option in Options do
-                        
+
                         _ENV.RunningOption = Option.Name
-                        
+
                         local Method = Option.Function()
-                        
+
                         if Method then
                             if type(Method) == "string" then
                                 _ENV.RunningMethod = Method
                             end
-                            
+
                             return Method
                         end
                     end
-                    
+
                     _ENV.RunningOption, _ENV.RunningMethod = nil, nil
                 end
 
@@ -261,19 +302,19 @@ AddModule("Parallels", function()
                 task.delay(3, function()
                     if _ENV.error_message then
                         _ENV.error_message.Text = "- Antigravity Model -\nStart Refresh Options ..."
-                        
+
                         task.wait(2)
-                        
+
                         if _ENV.RunningOption and Fallback[_ENV.RunningOption] then
                             Fallback[_ENV.RunningOption].Value = false
                             _ENV.error_message.Text = "- Antigravity Model -\nHas been Disabled " .. _ENV.RunningOption
                         end
-                        
+
                         task.wait(2)
-                        
+
                         _ENV.error_message:Destroy()
                         _ENV.error_message = nil
-                        
+
                         task.spawn(RunQueue, FarmFunctions)
                     end
                 end)
@@ -364,291 +405,6 @@ AddModule("Parallels", function()
     return Parallels
 end)
 
-AddModule("Library", function()
-    local Library = {}
-
-    local app = Cascade.New({
-        Theme = Cascade.Themes.Light
-    })
-
-    local Camera = workspace.CurrentCamera
-    local ViewportSize = Camera.ViewportSize
-    local Size = UDim2.new(0, ViewportSize.X * 0.8, 0, ViewportSize.Y * 0.95)
-
-    local function Convert(asset)
-        local t = typeof(asset)
-
-        if t == "number" then
-            return "rbxassetid://" .. asset
-        end
-
-        if t == "string" then
-            if asset:find("rbxassetid://", 1, true) then
-                return asset
-            end
-
-            return Cascade.Symbols[asset]
-        end
-
-        return asset
-    end
-
-    local function ToIndex(options, value)
-        if typeof(value) == "table" then
-            local indexes = {}
-
-            for _, v in ipairs(value) do
-                for i, opt in ipairs(options) do
-                    if opt == v then
-                        table.insert(indexes, i)
-                        break
-                    end
-                end
-            end
-
-            return indexes
-        else
-            for i, opt in ipairs(options) do
-                if opt == value then
-                    return i
-                end
-            end
-
-            return 1
-        end
-    end
-
-    Library.Window = (function(Info)
-        app.Window = app:Window({
-            Title = Info[1],
-            Subtitle = Info[2],
-            Size = Size,
-            UIBlur = false
-        })
-
-        return app.Window
-    end)
-
-    Library.Section = (function(Title)
-        return app.Window:Section({ Title = Title })
-    end)
-
-    Library.Tab = (function(Section, Info, Select)
-        return Section:Tab({
-            Title = " " .. Info[1],
-            Selected = Select or false,
-            Icon = Info[2] and Convert(Info[2]) or nil,
-        })
-    end)
-
-    Library.NewPage = function(Tab, Info)
-        return Tab:PageSection({
-            Title = Info[1],
-            Subtitle = Info[2] or nil
-        }):Form()
-    end
-
-    Library.Rows = (function(Forms, Search)
-        local Rows = Forms:Row({ SearchIndex = Search })
-        local Module = {}
-
-        Module.Right = function()
-            return Rows:Right()
-        end
-
-        Module.Left = {} do
-            function Module.Left:Text(Info)
-                local Text = Rows:Left():TitleStack({
-                    Title = Info[1],
-                    Subtitle = Info[2] or nil,
-                })
-
-                function Text:SetText(Main, Sub)
-                    if Main then Text.Title = Main end
-                    if Sub then Text.Subtitle = Sub end
-                end
-
-                return Text
-            end
-
-            function Module.Left:Call()
-                return Rows:Left()
-            end
-        end
-
-        return Module
-    end)
-
-    Library.TextLabel = function(Forms, Info)
-        local Module = Library.Rows(Forms, Info[1]) do
-            Module.TextLabel = Module.Left:Text(Info) 
-        end
-
-        return Module
-    end
-
-    Library.Toggle = (function(Forms, Info, Value, Callback)
-        local Module = Library.TextLabel(Forms, Info) do
-            local Toggle = Module.Right():Toggle({
-                Value = Value,
-                ValueChanged = Callback,
-            }) 
-
-            Module.Toggle = Toggle
-        end
-
-        return Module.Toggle
-    end)
-
-    Library.Slider = (function(Forms, Info, Value, Callback, Rounding)
-        local Module = Library.TextLabel(Forms, Info) do
-            local Text = Library.RightLabel(Module.Right(), "N/A")
-            local Slider = Module.Right():Slider({
-                Minimum = Value[1],
-                Maximum = Value[2],
-                Value   = Value[3],
-            })
-
-            local Rounding_Value = Rounding and tonumber(Rounding) or 0
-
-            local factor = 10 ^ Rounding_Value
-
-            local function Round(v)
-                return math.floor(v * factor + 0.5) / factor
-            end
-
-            Slider.ValueChanged = function(self, value)
-                local rounded = Round(value)
-                Text.Text = tostring(rounded)
-                
-                if Callback then Callback(self, rounded) end
-            end
-
-            Module.Slider = Slider
-            
-            Text.Text = tostring(Round(Slider.Value or 0))
-        end
-
-        return Module.Slider
-    end)
-
-    Library.Dropdown = function(Forms, Info, Value, Callback)
-        local Module = Library.TextLabel(Forms, Info) do
-            local options = Value[1] or { "None" }
-            local default = Value[3] or 1
-
-            local Dropdown = Module.Right():PopUpButton({
-                Options = options,
-                Maximum = Value[2] or #options,
-                Value = (function()
-                    if typeof(default) == "table" then
-                        local indexes = {}
-
-                        for _, v in ipairs(default) do
-                            table.insert(indexes, ToIndex(options, v))
-                        end
-
-                        return indexes
-                    else
-                        return ToIndex(options, default)
-                    end
-                end)(),
-                ValueChanged = function(self, value)
-                    if typeof(value) == "table" then
-                        local Collection = {}
-
-                        for _, idx in ipairs(value) do
-                            table.insert(Collection, self.Options[idx])
-                        end
-
-                        if Callback then Callback(Collection) end
-                    else
-                        if Callback then Callback(self.Options[value]) end
-                    end
-                end,
-            })
-
-            function Dropdown:Reset()
-                if self.Maximum and self.Maximum > 1 then
-                    self.Value = {}
-                else
-                    self.Value = 1
-                end
-            end
-
-            function Dropdown:Clear()
-                for i = #self.Options, 1, -1 do
-                    self:Remove(i)
-                end
-                self.Options = {}
-                self:Reset()
-            end
-
-            function Dropdown:Refresh(New)
-                self:Clear()
-                for _, idx in ipairs(New) do
-                    self:Option(idx)
-                end
-                self:Reset()
-            end
-
-            function Dropdown:AddRefresh(New)
-                return Library.RightButton(Module.Right(), "Refresh", function()
-                    self:Refresh(New)
-                end)
-            end
-
-            Module.Dropdown = Dropdown
-        end
-        return Module.Dropdown
-    end
-
-    Library.RightButton = (function(Right, Label, Callback, State)
-        return Right:Button({
-            Label = Label,
-            State = State or "Primary",
-            Pushed = Callback,
-        })
-    end)
-
-    Library.RightLabel = (function(Right, Text)
-        return Right:Label({ Text = Text })
-    end)
-
-    Library.Button = (function(Forms, Info, Label, Callback, State)
-        local TextLabel = Library.TextLabel(Forms, Info) do
-            return Library.RightButton(TextLabel.Right(), Label or "Click", Callback, State)
-        end
-    end)
-
-    Library.Textfield = (function(Forms, Info, Value, Callback)
-        local TextLabel = Library.TextLabel(Forms, Info) do
-            local Textfield = TextLabel.Right():TextField({
-                Placeholder = " ... ",
-                Value = Value or "None",
-                ValueChanged = Callback,
-            })
-
-            TextLabel.Textfield = Textfield
-        end
-
-        return TextLabel.Textfield
-    end)
-
-    Library.Symbol = (function(Forms, Info, Icon)
-        local TextLabel = Library.TextLabel(Forms, Info) do
-            return TextLabel.Right():Symbol({
-                Style = "Secondary",
-                Image = Convert(Icon),
-            })
-        end
-    end)
-
-    Library.app = app
-
-    return Library
-end)
-
 AddModule("Plugins", function()
     local Plugins = {
         NewTabs = true
@@ -656,216 +412,169 @@ AddModule("Plugins", function()
 
     local Configurations = Utils.Configurations
     local Parallels = Utils.Parallels
-    local Library = Utils.Library
     local Others = Utils.Others
-
-
-    local Utils = _ENV.Utils or (function(owner, repo, file)
-        local URL = string.format(
-            "https://raw.githubusercontent.com/%s/%s/main/%s",
-            owner, repo, file
-        )
-
-        return loadstring(game:HttpGet(URL))()
-    end)
 
     local Enabled, Options = Parallels.Options()
 
     function Plugins:Window(Info)
-        return Library.Window(Info)
+        Library['Base'] = Library:Window(Info or {})
+        return Library['Base']
     end
 
-    function Plugins:Section(Text)
-        return Library.Section(Text)
+    function Plugins:NewPage(Info)
+        return Library['Base']:NewPage({
+            Title = Info[1],
+            Desc = Info[2],
+            Icon = Info[3]
+        })
     end
-
-    function Plugins:MakeTab(Section, Info, Select)
-        return Library.Tab(Section, Info, Select)
+    
+    function Plugins:TextLabel(Forms, Info)
+        return Forms:Paragraph({
+            Title = Info[1],
+            Desc = Info[2],
+            Image = Info[3] or nil
+        }) 
     end
-
-    function Plugins:NewPage(Tab, Info)
-        return Library.NewPage(Tab, Info)
-    end
-
-    function Plugins:TextLabel(Forms, Info, Mode)
-        if Mode == "r" then
-            local TextLabel = Library.TextLabel(Forms, Info) do
-                return Library.RightLabel(TextLabel.Right(), Info[3] or "N/A") 
-            end
-        end
-
-        return Library.TextLabel(Forms, Info).TextLabel
-    end
-
-    function Plugins:Symbol(Forms, Info, Icon)
-        return Library.Symbol(Forms, Info, Icon)
+    
+    function Plugins:RightLabel(Forms, Info)
+        return Forms:RightLabel({
+            Title = Info[1],
+            Desc = Info[2],
+            Right = Info[3]
+        }) 
     end
 
     function Plugins:Toggle(Forms, Info, Flag, Callback)
         local Thread = nil
 
-        local Toggle = Library.Toggle(Forms, Info, Settings[Flag], function(self, value)
-            Settings[Flag] = value
-            Configurations:Save(Flag, value)
+        Fallback[Flag] = Forms:Toggle({
+            Title = Info[1],
+            Desc = Info[2],
+            Value = Settings[Flag],
+            Callback = function(value)
+                Settings[Flag] = value
+                Configurations:Save(Flag, value)
 
-            Enabled[Flag] = value
+                Enabled[Flag] = value
 
-            if value then
-                Thread = task.spawn(function()
-                    if Threads[Flag] then Threads[Flag](Settings[Flag]) end
-                end)
-            else
-                if Thread then task.cancel(Thread) end
+                if value then
+                    Thread = task.spawn(function()
+                        if Threads[Flag] then Threads[Flag](Settings[Flag]) end
+                    end)
+                else
+                    if Thread then task.cancel(Thread) end
+                end
+
+                if Callback then Callback(value) end
             end
+        })
 
-            if Callback then Callback(value) end
-        end)
-        
-        Fallback[Flag] = Toggle
-        
-        return Toggle
+        return Fallback[Flag]
     end
 
     function Plugins:Slider(Forms, Info, Value, Flag, Callback)
-        return Library.Slider(Forms, Info, { Value[1], Value[2], Settings[Flag] }, function(self, value)
-            Settings[Flag] = value
-            Configurations:Save(Flag, value)
-            if Callback then Callback(value) end
-        end, Value[3])
+        return Forms:Slider({
+            Title = Info,
+            Min = Value[1],
+            Max = Value[2],
+            Rounding = Value[3],
+            Value = Settings[Flag],
+            Callback = function(value)
+                Settings[Flag] = value
+                Configurations:Save(Flag, value)
+                if Callback then Callback(value) end
+            end
+        })
     end
 
-    function Plugins:Dropdown(Forms, Info, List, Maximum, Flag, Callback)
-        return Library.Dropdown(Forms, Info, { List, Maximum, Settings[Flag] }, function(value)
-            Settings[Flag] = value
-            Configurations:Save(Flag, value)
+    function Plugins:Dropdown(Forms, Info, List, Flag, Callback)
+        return Forms:Dropdown({
+            Title = Info,
+            Value = Settings[Flag],
+            List = List,
+            Callback = function(value)
+                Settings[Flag] = value
+                Configurations:Save(Flag, value)
 
-            if Callback then Callback(value) end
-        end)
+                if Callback then Callback(value) end
+            end
+        })
     end
 
-    function Plugins:Button(Forms, Info, Callback, State)
-        return Library.Button(Forms, Info, Info[3] or nil, Callback, State)
+    function Plugins:Button(Forms, Info, Callback)
+        return Forms:Button({
+            Title = Info[1],
+            Desc = Info[2],
+            Callback = Callback,
+        }) 
     end
 
-    function Plugins:Textfield(Forms, Info, Flag, Callback)
-        return Library.Textfield(Forms, Info, Settings[Flag], function(self, value)
-            Settings[Flag] = value
-            Configurations:Save(Flag, value)
+    function Plugins:Input(Forms, Flag, Callback)
+        return Forms:Input({
+            Value = Settings[Flag],
+            Callback = function(value)
+                Settings[Flag] = value
+                Configurations:Save(Flag, value)
 
-            if Callback then Callback(value) end
-        end)
+                if Callback then Callback(value) end
+            end
+        })
     end
 
-    function Plugins:Dashboard()
-        local Section = Plugins:Section("Dashboard")
-
-        local Analysis = Plugins:MakeTab(Section, { "Analysis", 136648496711424 }) do
-
+    function Plugins:Community()
+        local Community = Plugins:NewPage({ "Community", "Join our community", 115960025411300 }) do
+            Community:Section("Community") do
+                local Discord = Community:Input({ Value = "https://discord.gg/JXgCz6uC2U" }) do
+                    Discord.TextEditable = false
+                    Discord.Interactable = false
+                    Discord.ClearTextOnFocus = false 
+                end
+                
+                local Banner = Utils.Asset:Get("Q613L20.png") do
+                    Community:Banner(Banner or 98180244082666) 
+                end
+            end
         end
-
-        local Update = Plugins:MakeTab(Section, { "Tutorial", 84780130894041 }) do
-
-        end
-
-        return Analysis
+        
+        return Community
     end
-
-    function Plugins:SetValue(index, value)
-        Library.app.Window[index] = value
-    end
-
+    
     function Plugins:Managers()
-        local Section = Plugins:Section("Managers")
-
-        local Server = Plugins:MakeTab(Section, { "Server", 105159951926712 }) do
-            local _1 = Plugins:NewPage(Server, { "Server", "Allows users to join and change to target server." }) do
-
+        local Managers = Plugins:NewPage({ "Managers", "Managers Options", 134261589888025 }) do
+            
+            Managers:Section("Server") do
                 Configurations:Default("JobId", JobId)
-
-                Plugins:Textfield(_1, { "Enter JobId", "Paste the target server JobId to join a specific server instance."  }, "JobId")
-
-                Plugins:Button(_1, { "Join", "Connect to the server using the provided JobId.", "Join" }, function()
+                
+                Plugins:Input(Managers, 'JobId')
+                
+                Plugins:Button(Managers, { "Join", "Connect to the server using the provided JobId." }, function()
                     Others.Server:Join(Settings['JobId'])
                 end)
-
-                Plugins:Button(_1, {  "Copy JobId", "Copy the current server JobId to your clipboard.", "Copy" }, function()
-                    pcall(setclipboard, JobId)
-                end)
-
-                Plugins:Button(_1, { "Change Server", "Teleport to a different public server instance.", "Change" }, function()
+                
+                Plugins:Button(Managers, { "Change", "Teleport to a different public server instance." }, function()
                     Others.Server:Change()
                 end)
-
-                Plugins:Button(_1, { "Rejoin Server", "Reconnect to the current server instance.", "Rejoin" }, function()
+                
+                Plugins:Button(Managers, { "Rejoin", "Reconnect to the current server instance." }, function()
                     Others.Server:Rejoin()
                 end)
             end
-        end
-
-        local Optimize = Plugins:MakeTab(Section, { "Optimize", 134831414664674 }) do
-            local _1 = Plugins:NewPage(Optimize, { "Optimize", "Allows users to improve performance, efficiency" }) do
-
-                Configurations:Default("White Screen", false)
-
-                Plugins:Toggle(_1, { "Smooth Mode", "Add a delay to the loop execution to slow it down, making the farming smoother and more stable." }, "Smooth Mode")
-                
-                Plugins:Toggle(_1, { "White Screen", "Disabled 3D Rendering to improve performance" }, "White Screen", function(value)
+            
+            Managers:Section("Optimize") do
+                Plugins:Toggle(Managers, { "White Screen", "Disabled 3D Rendering to improve performance" }, "White Screen", function(value)
                     Others.Optimize:Set3d(value)
                 end)
 
-                Plugins:Button(_1, { "Fast Mode", "Set graphics quality to low", "Boost" }, function()
+                Plugins:Button(Managers, { "Fast Mode", "Set graphics quality to low" }, function()
                     Others.Optimize:Low()
                 end)
             end
-        end
-
-        local Appearance = Plugins:MakeTab(Section, { "Appearance", 92721515638108 }) do
-            local _1 = Plugins:NewPage(Appearance, { "Theme", "Customize the overall look and visual style of the system." }) do
-
-                Configurations:Default("Dark Mode", true)
-
-                Plugins:Toggle(_1, { "Dark Mode", "Dark Mode is a application appearance setting that uses a dark color palette to provide a comfortable viewing experience tailored for low-light environments." }, "Dark Mode", function(value)
-                    Library.app['Theme'] = value and Cascade.Themes.Dark or Cascade.Themes.Light
-                end)
-            end
-
-            local _2 = Plugins:NewPage(Appearance, { "Input", "Configure input behavior and interaction settings." }) do
-
-                Configurations:Default("Searchable", true)
-                Configurations:Default("Draggable", true)
-                Configurations:Default("Resizable", true)
-
-                Plugins:Toggle(_2, { "Searchable", "Allows pages to be searched using a text field in the title bar." }, "Searchable", function(value)
-                    Plugins:SetValue('Searching', value)
-                end)
-
-                Plugins:Toggle(_2, { "Draggable", "Allows users to move the window with a mouse or touch device." }, "Draggable", function(value)
-                    Plugins:SetValue('Draggable', value)
-                end)
-
-                Plugins:Toggle(_2, { "Resizable", "Allows users to resize the window with a mouse or touch device." }, "Resizable", function(value)
-                    Plugins:SetValue('Resizable', value)
-                end)
-            end
-
-            local _3 = Plugins:NewPage(Appearance, { "Effects", "These effects may be resource intensive across different systems." }) do
-
-                Configurations:Default("Shadow", true)
-                Configurations:Default("Acrylic", false)
-
-                Plugins:Toggle(_3, { "Shadow", "Enables a dropshadow effect on the window." }, "Shadow", function(value)
-                    Plugins:SetValue('Dropshadow', value)
-                end)
-
-                Plugins:Toggle(_3, { "Acrylic", "Enables a UI background blur effect on the window." }, "Acrylic", function(value)
-                    Plugins:SetValue('UIBlur', value)
-                end)
-            end
-        end
-
-        local Config = Plugins:MakeTab(Section, { "Configuration", 134261589888025 }) do
-            local _1 = Plugins:NewPage(Config, { "Configurations", "Manage and customize system configuration settings." }) do
-                local Button = Plugins:Button(_1, { "Remove Worksapce", "Reset save setting file to default value.", "Remove" }, function()
+            
+            Managers:Section("Configurations") do
+                Library:SizeSlider(Managers, Plugins)
+                
+                Plugins:Button(Managers, { "Remove Worksapce", "Reset save setting file to default value." }, function()
                     local Files = Configurations.FullPaths
 
                     if Files and isfile(Files) then
@@ -874,7 +583,7 @@ AddModule("Plugins", function()
                     else
                         warn('File not found')
                     end
-                end, "Destructive")
+                end)
             end
         end
     end

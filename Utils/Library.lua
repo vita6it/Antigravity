@@ -1058,6 +1058,12 @@ function Library:Window(Args)
                 BorderSizePixel = 0,
                 Size = UDim2.new(0, 20, 0, 20)
             })
+            
+            local UIStroke = Library:Create("UIStroke", {
+                Parent = Background,
+                Color = Color3.fromRGB(25, 25, 25),
+                Thickness = 0.5
+            })
 
             Library:Create("UICorner", {
                 Parent = Background,
@@ -1119,12 +1125,14 @@ function Library:Window(Args)
                     Library:Tween({ v = Highligh_1, t = 0.5, s = "Exponential", d = "Out", g = { BackgroundTransparency = 0 } }):Play()
                     Library:Tween({ v = ImageLabel_1, t = 0.5, s = "Exponential", d = "Out", g = { ImageTransparency = 0 } }):Play()
                     Library:Tween({ v = ImageLabel_1, t = 0.3, s = "Exponential", d = "Out", g = { Size = UDim2.new(0.5, 0, 0.5, 0) } }):Play()
+                    UIStroke.Thickness = 0
                 else
                     Callback(Data.Value)
 
                     TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
                     Library:Tween({ v = Highligh_1, t = 0.5, s = "Exponential", d = "Out", g = { BackgroundTransparency = 1 } }):Play()
                     Library:Tween({ v = ImageLabel_1, t = 0.5, s = "Exponential", d = "Out", g = { ImageTransparency = 1 } }):Play()
+                    UIStroke.Thickness = 0.5
                 end
             end
 

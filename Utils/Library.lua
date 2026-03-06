@@ -2157,7 +2157,9 @@ function Library:Window(Args)
             })
             
             function Library:SizeSlider(Page, Plugins)
-                return Plugins:Slider(Page, "Interface Scaler", { 1, 2, 2 }, "Interface Scaler")
+                return Plugins:Slider(Page, "Interface Scaler", { 1, 2, 2 }, "Interface Scaler", function(v)
+                    Scaler.Scale = v
+                end)
             end
             
             function Library:SetTimeValue(Value)

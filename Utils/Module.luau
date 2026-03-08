@@ -256,7 +256,7 @@ AddModule("Parallels", function()
             _ENV.ISLOADED = false
             _ENV.OnFarm = false
 
-            local text = (`error [ { _ENV.RunningOption or "Null" } ] { ErrorMessage }`)
+            local text = (`error [ { _ENV.RunningOption or "Null" } ] { ErrorMessage }\nWait 10 second for reset option.`)
 
             if _ENV.error_message then
                 _ENV.error_message.Text ..= `\n\n{ text }`
@@ -299,7 +299,7 @@ AddModule("Parallels", function()
             if not Success then
                 ShowErrorMessage(ErrorMessage)
 
-                task.delay(3, function()
+                task.delay(10, function()
                     if _ENV.error_message then
                         _ENV.error_message.Text = "- Antigravity Model -\nStart Refresh Options ..."
 

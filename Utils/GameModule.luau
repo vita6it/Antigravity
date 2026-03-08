@@ -939,8 +939,8 @@ return(function(Installer)
         end
 
         local Highlight = Instance.new("Highlight") do
-            Highlight.FillColor = Color3.fromRGB(255, 0, 127)
-            Highlight.OutlineColor = Color3.fromRGB(255, 0, 127)
+            Highlight.FillColor = Color3.fromRGB(0, 170, 255)
+            Highlight.OutlineColor = Color3.fromRGB(0, 170, 255)
             Highlight.FillTransparency = 0.3
         end
 
@@ -1469,7 +1469,7 @@ return(function(Installer)
         function Ocean:Drive(Ship, Target, High)
             local VehicleSeat = Ship:FindFirstChild("VehicleSeat")
 
-            local Position = VehicleSeat.Position
+            local Position = VehicleSeat.CFrame
             local Distance = (Position.Position - Target.Position).Magnitude
 
             local BodyPosition = VehicleSeat:FindFirstChild("BodyPosition")
@@ -1884,8 +1884,8 @@ return(function(Installer)
                 ['North Pole'] = CFrame.new(-5397, 12, 1454),
             },
             {
-                ['Submerged Island'] = CFrame.new(-16266, 25, 1372),
-                ['Tiki Outpost'] = CFrame.new(-16594, 581, 428),
+                ['Submerged Island'] = CFrame.new(9952, -1887, 9678),
+                ['Tiki Outpost'] = CFrame.new(9952, -1887, 9678),
                 ['Castle on the Sea'] = CFrame.new(-5086, 315, -2974),
                 ['Hydra Island'] = CFrame.new(5164, 1174, 222),
                 ['Peanut Island'] = CFrame.new(-2111, 193, -10243),
@@ -1963,6 +1963,7 @@ return(function(Installer)
                 ["Radioactive Material"]   = { "Factory Staff" },
                 ["Vampire Fang"]           = { "Vampire" },
                 ["Mystic Droplet"]         = { "Water Fighter", "Sea Soldier" },
+                ["Ectoplasm"]              = { 'Ship Steward', 'Ship Officer', 'Ship Engineer', 'Ship Deckhand' }
             },
             [3] = {
                 ["Mini Tusk"]      = { "Mythological Pirate" },

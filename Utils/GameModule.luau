@@ -939,8 +939,8 @@ return(function(Installer)
         end
 
         local Highlight = Instance.new("Highlight") do
-            Highlight.FillColor = Color3.fromRGB(0, 170, 255)
-            Highlight.OutlineColor = Color3.fromRGB(0, 170, 255)
+            Highlight.FillColor = Color3.fromRGB(255, 0, 127)
+            Highlight.OutlineColor = Color3.fromRGB(255, 0, 127)
             Highlight.FillTransparency = 0.3
         end
 
@@ -1488,7 +1488,7 @@ return(function(Installer)
                 if Tween then Tween:Cancel() end
             end
 
-            VehicleSeat.CFrame = CFrame.new(Position.X, High or 100, Position.Z)
+            VehicleSeat.CFrame = CFrame.new(Position.Position.X, High or 100, Position.Position.X)
 
             Tween:Play()
         end
@@ -1983,7 +1983,7 @@ return(function(Installer)
             end
 
             if v == 2 then
-                return { "Magma Ore", "Scrap Metal", "Radioactive Material", "Vampire Fang", "Mystic Droplet" }
+                return { "Magma Ore", "Scrap Metal", "Radioactive Material", "Vampire Fang", "Mystic Droplet", "Ectoplasm" }
             end
 
             if v == 3 then

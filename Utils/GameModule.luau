@@ -1884,8 +1884,8 @@ return(function(Installer)
                 ['North Pole'] = CFrame.new(-5397, 12, 1454),
             },
             {
-                ['Submerged Island'] = CFrame.new(9952, -1887, 9678),
-                ['Tiki Outpost'] = CFrame.new(9952, -1887, 9678),
+                ['Submerged Island'] = CFrame.new(-16266, 25, 1372),
+                ['Tiki Outpost'] = CFrame.new(-16594, 581, 428),
                 ['Castle on the Sea'] = CFrame.new(-5086, 315, -2974),
                 ['Hydra Island'] = CFrame.new(5164, 1174, 222),
                 ['Peanut Island'] = CFrame.new(-2111, 193, -10243),

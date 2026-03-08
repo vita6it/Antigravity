@@ -2127,6 +2127,8 @@ function Library:Window(Args)
         PageService.GamepadInputEnabled = false
         PageService.ScrollWheelInputEnabled = false
         PageService.TouchInputEnabled = false
+        
+        Library.PageService = PageService
 
         Scale_1.ClipsDescendants = true
 

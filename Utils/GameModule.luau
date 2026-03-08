@@ -1467,29 +1467,29 @@ return(function(Installer)
         end
 
         function Ocean:Drive(Ship, Target, High)
-            local VehicleSeat = Ship:FindFirstChild("VehicleSeat")
+            local Seat = Ship:FindFirstChild("VehicleSeat")
+            if not Seat then return end
 
-            local Position = VehicleSeat.CFrame
-            local Distance = (Position.Position - Target.Position).Magnitude
+            local BodyPosition = Seat:FindFirstChild("BodyPosition")
+            local BodyVelocity = Seat:FindFirstChild("BodyVelocity")
+            if not BodyPosition or not BodyVelocity then return end
 
-            local BodyPosition = VehicleSeat:FindFirstChild("BodyPosition")
-            local BodyVelocity = BodyPosition and BodyPosition:FindFirstChild("BodyVelocity")
+            local Origin   = Seat.Position
+            local Distance = (Target.Position - Ship:GetPivot().Position).Magnitude
 
-            if not BodyVelocity then return end
-
-            BodyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
             BodyPosition.MaxForce = Vector3.zero
-            BodyVelocity.P = 0
+            BodyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+            BodyVelocity.P        = 0
 
-            local Info = TweenInfo.new(Distance / 300, Enum.EasingStyle.Linear)
-            local Tween = TweenService:Create(VehicleSeat, Info, { CFrame = Position })
+            Seat.CFrame = CFrame.new(Origin.X, High or 100, Origin.Z)
 
-            _ENV.StopShip = function()
-                if Tween then Tween:Cancel() end
-            end
+            local Tween = TweenService:Create(
+                Seat,
+                TweenInfo.new(Distance / 250, Enum.EasingStyle.Linear),
+                { CFrame = Target }
+            )
 
-            VehicleSeat.CFrame = CFrame.new(Position.Position.X, High or 100, Position.Position.X)
-
+            _ENV.StopShip = function() Tween:Cancel() end
             Tween:Play()
         end
 

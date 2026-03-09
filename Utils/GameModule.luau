@@ -98,6 +98,8 @@ return(function(Installer)
     local restorefunction = restorefunction or empty
     local hookfunction = hookfunction or empty
 
+    local Executor = string.upper(if identifyexecutor then identifyexecutor() else "NULL")
+
     local BRING_TAG = _ENV._Bring_Tag or tostring(math.random(80, 2e4))
     local KILLAURA_TAG = _ENV._KillAura_Tag or tostring(math.random(120, 2e4))
 
@@ -517,10 +519,28 @@ return(function(Installer)
 
     AddModule("Quest", function()
         local Quest = {
-            Quests = require(ReplicatedStorage:WaitForChild('Quests')),
-            GuideModule = require(ReplicatedStorage:WaitForChild('GuideModule')),
             Blacklist = { "BartiloQuest", "MarineQuest", "CitizenQuest" },
         }
+        
+        Quest.Quests = (function()
+            local Success, Quests = pcall(require, ReplicatedStorage:WaitForChild('Quests'))
+            
+            if not Success or type(Quests) ~= "table" or Executor == "XENO" then
+                return fetch("Utils/Quests.luau")
+            end
+            
+            return Quests
+        end)()
+        
+        Quest.GuideModule['Data']['NPCList'] = (function()
+            local Success, GuideModule = pcall(require, ReplicatedStorage:WaitForChild('GuideModule'))
+
+            if not Success or type(GuideModule) ~= "table" or Executor == "XENO" then
+                return fetch("Utils/GuideModule.luau")[Module.Sea]
+            end
+
+            return GuideModule
+        end)()
 
         function Quest:GetMonster(CurrentLevel)
             local Data, Levels = {}, {}

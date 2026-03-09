@@ -294,6 +294,8 @@ return(function(Installer)
 
             return RaidList
         end)()
+        
+        table.foreach(Module.RaidList)
 
         Module.Sea = (function()
             local Current = workspace:GetAttribute('MAP') do

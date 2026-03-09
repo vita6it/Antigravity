@@ -525,55 +525,53 @@ return(function(Installer)
     AddModule("Quest", function()
         local Quest = {
             Blacklist = { "BartiloQuest", "MarineQuest", "CitizenQuest" },
-            GuideModule = {}
+            GuideModule = {
+                Data = {}
+            }
         }
-        
+
         Quest.Quests = (function()
             if Executor == "XENO" then
                 return fetch("Utils/Quests.luau")
             end
-
+            
             local Success, Quests = pcall(require, ReplicatedStorage:WaitForChild('Quests'))
-
+            
             if not Success or type(Quests) ~= "table" then
                 return fetch("Utils/Quests.luau")
+                
             end
-
+            
             return Quests
         end)()
-        
-        Quest.GuideModule.Data = {}
+
         Quest.GuideModule.Data.NPCList = (function()
             if Executor == "XENO" then
                 return fetch("Utils/GuideModule.luau")[Module.Sea]
             end
-
             local Success, GuideModule = pcall(require, ReplicatedStorage:WaitForChild('GuideModule'))
+            
             if not Success or type(GuideModule) ~= "table" then
                 return fetch("Utils/GuideModule.luau")[Module.Sea]
             end
-
+            
             return GuideModule
         end)()
 
         function Quest:GetMonster(CurrentLevel)
             local Data, Levels = {}, {}
             local Maximum = ({ {0, 700}, {700, 1500}, {1500, math.huge} })[Module.Sea]
-
+            
             for name, task in pairs(Quest.Quests) do
-
                 if table.find(Quest.Blacklist, name) then
                     continue
                 end
-
+                
                 for num, mission in pairs(task) do
                     local Level = mission.LevelReq
                     local Monster, Value = next(mission.Task)
-
                     if Level >= Maximum[1] and Level < Maximum[2] and CurrentLevel >= Level and Value > 1 then
-
                         table.insert(Levels, Level)
-
                         Data[tostring(Level)] = {
                             Name = mission.Name,
                             Level = num,
@@ -582,34 +580,35 @@ return(function(Installer)
                     end
                 end
             end
-
+            
+            if #Levels == 0 then return nil end
+            
             return Data[tostring(math.max(unpack(Levels)))]
         end
 
         function Quest:NPCsData(CurrentLevel)
             local Data, Levels = {}, {}
-
+            
             for _, Npcs in pairs(Quest.GuideModule['Data']['NPCList']) do
                 local Level = Npcs.Levels[1]
-
                 if CurrentLevel >= Level then
-
                     table.insert(Levels, Level)
-
                     Data[tostring(Level)] = {
                         ['Position'] = Npcs.Position,
                         ['Quest'] = Npcs.InternalQuestName,
                     }
                 end
             end
-
+            
+            if #Levels == 0 then return nil end
+            
             return Data[tostring(math.max(unpack(Levels)))]
         end
 
         function Quest:GetQuest(CurrentLevel)
             local Level = CurrentLevel.Value
-
-            if Level == 1 and Level <= 9 then
+            
+            if Level >= 1 and Level <= 9 then
                 if tostring(LocalPlayer.Team) == "Marines" then
                     return {
                         ['Name'] = "Trainees",
@@ -627,16 +626,20 @@ return(function(Installer)
                         ['Position'] = CFrame.new(-2711, 24, 2104),
                     }
                 end
-
-                return
+                return nil
             end
 
             local Data = self:GetMonster(Level)
+            
+            if not Data then return nil end
+
             local NPCsData = self:NPCsData(Level)
+            
+            if not NPCsData then return nil end
 
             Data['Quest'] = NPCsData.Quest
             Data['Position'] = CFrame.new(NPCsData.Position)
-
+            
             return Data
         end
 

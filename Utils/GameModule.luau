@@ -276,26 +276,29 @@ return(function(Installer)
         Module.IsMobile = Mobile
 
         Module.RaidList = (function()
-            local Success, RaidModule = pcall(require, ReplicatedStorage:WaitForChild("Raids"))
+            if Executor == "XENO" then
+                return {
+                    "Phoenix", "Dough", "Flame", "Ice", "Quake", "Light",
+                    "Dark", "Spider", "Rumble", "Magma", "Buddha", "Sand",
+                }
+            end
 
+            local Success, RaidModule = pcall(require, ReplicatedStorage:WaitForChild("Raids"))
+            
             if not Success or type(RaidModule) ~= "table" then
                 return {
-                    "Phoenix", "Dough", "Flame", "Ice", "Quake", "Light";
-                    "Dark", "Spider", "Rumble", "Magma", "Buddha", "Sand";
+                    "Phoenix", "Dough", "Flame", "Ice", "Quake", "Light",
+                    "Dark", "Spider", "Rumble", "Magma", "Buddha", "Sand",
                 }
             end
 
             local AdvancedRaids = RaidModule.advancedRaids or {}
             local NormalRaids = RaidModule.raids or {}
             local RaidList = {}
-
             for i = 1, #AdvancedRaids do table.insert(RaidList, AdvancedRaids[i]) end
             for i = 1, #NormalRaids do table.insert(RaidList, NormalRaids[i]) end
-
             return RaidList
         end)()
-        
-        table.foreach(Module.RaidList)
 
         Module.Sea = (function()
             local Current = workspace:GetAttribute('MAP') do
@@ -525,19 +528,26 @@ return(function(Installer)
         }
         
         Quest.Quests = (function()
-            local Success, Quests = pcall(require, ReplicatedStorage:WaitForChild('Quests'))
-            
-            if not Success or type(Quests) ~= "table" or Executor == "XENO" then
+            if Executor == "XENO" then
                 return fetch("Utils/Quests.luau")
             end
-            
+
+            local Success, Quests = pcall(require, ReplicatedStorage:WaitForChild('Quests'))
+
+            if not Success or type(Quests) ~= "table" then
+                return fetch("Utils/Quests.luau")
+            end
+
             return Quests
         end)()
-        
-        Quest.GuideModule['Data']['NPCList'] = (function()
-            local Success, GuideModule = pcall(require, ReplicatedStorage:WaitForChild('GuideModule'))
 
-            if not Success or type(GuideModule) ~= "table" or Executor == "XENO" then
+        Quest.GuideModule['Data']['NPCList'] = (function()
+            if Executor == "XENO" then
+                return fetch("Utils/GuideModule.luau")[Module.Sea]
+            end
+
+            local Success, GuideModule = pcall(require, ReplicatedStorage:WaitForChild('GuideModule'))
+            if not Success or type(GuideModule) ~= "table" then
                 return fetch("Utils/GuideModule.luau")[Module.Sea]
             end
 

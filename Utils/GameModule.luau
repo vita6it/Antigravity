@@ -525,6 +525,7 @@ return(function(Installer)
     AddModule("Quest", function()
         local Quest = {
             Blacklist = { "BartiloQuest", "MarineQuest", "CitizenQuest" },
+            GuideModule = {}
         }
         
         Quest.Quests = (function()
@@ -540,8 +541,9 @@ return(function(Installer)
 
             return Quests
         end)()
-
-        Quest.GuideModule['Data']['NPCList'] = (function()
+        
+        Quest.GuideModule.Data = {}
+        Quest.GuideModule.Data.NPCList = (function()
             if Executor == "XENO" then
                 return fetch("Utils/GuideModule.luau")[Module.Sea]
             end

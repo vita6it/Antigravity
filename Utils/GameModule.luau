@@ -15,7 +15,7 @@ return(function(Installer)
     local Settings = Installer.Settings
     local Connect = Installer.Connect
 
-    local function fetch(owner, repo, file)
+    local function fetch(file)
         local URL = string.format(
             "https://raw.githubusercontent.com/%s/%s/main/%s",
             Owner, Repository, file

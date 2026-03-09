@@ -2231,58 +2231,61 @@ return(function(Installer)
     end)
 
     task.defer(function()
-        local function Log(code, message, context)
-            return warn(string.format("[ Forbidden ] [ %03d ] [ %s ] \n%s",code,context,message))
-        end
+        if Executor ~= "XENO" then
 
-        if not _ENV._0riginal then
-            local _Old
-            
-            local safehook = hookmetamethod and clonefunction(hookmetamethod)
-            local safegetnamecall = getnamecallmethod and clonefunction(getnamecallmethod)
+            local function Log(code, message, context)
+                return warn(string.format("[ Forbidden ] [ %03d ] [ %s ] \n%s",code,context,message))
+            end
 
-            _Old = safehook(game, "__namecall", function(self, ...)
-                local method = safegetnamecall()
+            if not _ENV._0riginal then
+                local _Old
 
-                if tostring(self) == "PlayerGui" then
-                    if method == "Destroy" or method == "Remove" or method == "ClearAllChildren" then
-                        return Log(
-                            403,
-                            "Access denied - PlayerGui:Destroy()",
-                            "PlayerGui was locked by Antigravity."
-                        )
+                local safehook = hookmetamethod and clonefunction(hookmetamethod)
+                local safegetnamecall = getnamecallmethod and clonefunction(getnamecallmethod)
+
+                _Old = safehook(game, "__namecall", function(self, ...)
+                    local method = safegetnamecall()
+
+                    if tostring(self) == "PlayerGui" then
+                        if method == "Destroy" or method == "Remove" or method == "ClearAllChildren" then
+                            return Log(
+                                403,
+                                "Access denied - PlayerGui:Destroy()",
+                                "PlayerGui was locked by Antigravity."
+                            )
+                        end
                     end
-                end
 
-                if method == "FireServer" or method == "InvokeServer" then
-                    local arg1, arg2 = ...
+                    if method == "FireServer" or method == "InvokeServer" then
+                        local arg1, arg2 = ...
 
-                    if method == "InvokeServer" and arg1 == 'X' and typeof(arg2) == 'Vector3' and self.Name == "" then
-                        if Module.Aimbot:Check() then
-                            return _Old(self, arg1, _ENV.Target)
+                        if method == "InvokeServer" and arg1 == 'X' and typeof(arg2) == 'Vector3' and self.Name == "" then
+                            if Module.Aimbot:Check() then
+                                return _Old(self, arg1, _ENV.Target)
+                            end
+
+                            return _Old(self, ...)
                         end
 
-                        return _Old(self, ...)
-                    end
+                        if method == "FireServer" and self.Name == "RemoteEvent" and typeof(arg1) == "Vector3" and arg2 == nil then
+                            if Module.Aimbot:Check() then
+                                return _Old(self, _ENV.Target)
+                            end
 
-                    if method == "FireServer" and self.Name == "RemoteEvent" and typeof(arg1) == "Vector3" and arg2 == nil then
-                        if Module.Aimbot:Check() then
-                            return _Old(self, _ENV.Target)
+                            return _Old(self, ...)
                         end
-
-                        return _Old(self, ...)
                     end
-                end
 
-                return _Old(self, ...)
-            end)
+                    return _Old(self, ...)
+                end)
 
-            _ENV._0riginal = _Old
+                _ENV._0riginal = _Old
+            end
+
+            --local EffectsLocalThread: LocalScript = PlayerScripts.EffectsLocalThread do
+            --    EffectsLocalThread.Disabled = true 
+            --end 
         end
-        
-        --local EffectsLocalThread: LocalScript = PlayerScripts.EffectsLocalThread do
-        --    EffectsLocalThread.Disabled = true 
-        --end
     end)
 
     return Module

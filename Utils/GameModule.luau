@@ -1500,7 +1500,7 @@ return(function(Installer)
             for _, v in SeaBeasts:GetChildren() do
                 if not self:IsAlive(SeaBeasts) then continue end
 
-                local HumanoidRootPart = HumanoidRootPart:FindFirstChild("HumanoidRootPart")
+                local HumanoidRootPart = v:FindFirstChild("HumanoidRootPart")
 
                 if not HumanoidRootPart then continue end
 

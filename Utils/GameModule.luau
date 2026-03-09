@@ -1494,25 +1494,24 @@ return(function(Installer)
         end
 
         function Ocean:Seabeast()
-            local Nearest = nil
-            local Distance = 5000
+            local closest = nil
+            local shortestDistance = 5000
 
-            for _, v in SeaBeasts:GetChildren() do
-                if not self:IsAlive(SeaBeasts) then continue end
+            for _, seabeast in pairs(SeaBeasts:GetChildren()) do
+                if not seabeast:IsA("Model") or not self:IsAlive(seabeast) then continue end
 
-                local HumanoidRootPart = v:FindFirstChild("HumanoidRootPart")
+                local hrp = seabeast:FindFirstChild("HumanoidRootPart")
+                if not hrp then continue end
 
-                if not HumanoidRootPart then continue end
-
-                local Magnitude = Module:Distance(HumanoidRootPart.Position)
-
-                if Magnitude < Distance then
-                    Distance = Magnitude
-                    Nearest = v
+                local distance = Module:Distance(hrp.Position)
+                
+                if distance < shortestDistance then
+                    shortestDistance = distance
+                    closest = seabeast
                 end
             end
 
-            return Nearest
+            return closest
         end
 
         function Ocean:IsSeaBeastHiding(Animator)

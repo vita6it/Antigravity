@@ -2261,4 +2261,4 @@ return(function(Installer)
     end)
 
     return Module
-end)()
+end)

@@ -517,10 +517,11 @@ return(function(Installer)
             return Quests
         end)()
 
-        Quest.GuideModule.Data.NPCList = (function()
+        Quest.GuideModule = (function()
             if Executor == "XENO" then
                 return fetch("Utils/GuideModule.luau")[Module.Sea]
             end
+            
             local Success, GuideModule = pcall(require, ReplicatedStorage:WaitForChild('GuideModule'))
 
             if not Success or type(GuideModule) ~= "table" then
@@ -535,6 +536,7 @@ return(function(Installer)
             local Maximum = ({ {0, 700}, {700, 1500}, {1500, math.huge} })[Module.Sea]
 
             for name, task in pairs(Quest.Quests) do
+
                 if table.find(Quest.Blacklist, name) then
                     continue
                 end
@@ -542,8 +544,11 @@ return(function(Installer)
                 for num, mission in pairs(task) do
                     local Level = mission.LevelReq
                     local Monster, Value = next(mission.Task)
+
                     if Level >= Maximum[1] and Level < Maximum[2] and CurrentLevel >= Level and Value > 1 then
+
                         table.insert(Levels, Level)
+
                         Data[tostring(Level)] = {
                             Name = mission.Name,
                             Level = num,
@@ -553,18 +558,19 @@ return(function(Installer)
                 end
             end
 
-            if #Levels == 0 then return nil end
-
             return Data[tostring(math.max(unpack(Levels)))]
         end
 
         function Quest:NPCsData(CurrentLevel)
             local Data, Levels = {}, {}
 
-            for _, Npcs in pairs(Quest.GuideModule['Data']['NPCList']) do
+            for _, Npcs in pairs(Quest.GuideModule) do
                 local Level = Npcs.Levels[1]
+
                 if CurrentLevel >= Level then
+                    
                     table.insert(Levels, Level)
+
                     Data[tostring(Level)] = {
                         ['Position'] = Npcs.Position,
                         ['Quest'] = Npcs.InternalQuestName,
@@ -572,15 +578,13 @@ return(function(Installer)
                 end
             end
 
-            if #Levels == 0 then return nil end
-
             return Data[tostring(math.max(unpack(Levels)))]
         end
 
         function Quest:GetQuest(CurrentLevel)
             local Level = CurrentLevel.Value
 
-            if Level >= 1 and Level <= 9 then
+            if Level == 1 and Level <= 9 then
                 if tostring(LocalPlayer.Team) == "Marines" then
                     return {
                         ['Name'] = "Trainees",
@@ -598,16 +602,12 @@ return(function(Installer)
                         ['Position'] = CFrame.new(-2711, 24, 2104),
                     }
                 end
-                return nil
+
+                return
             end
 
             local Data = self:GetMonster(Level)
-
-            if not Data then return nil end
-
             local NPCsData = self:NPCsData(Level)
-
-            if not NPCsData then return nil end
 
             Data['Quest'] = NPCsData.Quest
             Data['Position'] = CFrame.new(NPCsData.Position)
@@ -626,7 +626,7 @@ return(function(Installer)
         local SeaCastle = CFrame.new(-5556, 314, -2988)
 
         local TagsMobs = {
-            __Elite = CreateDictionary({ "Deandre", "Diablo", "Urban" }, true),
+            __Elite = CreateDictionary({ "Deandre", "Diablo", "Urban", "Tyrant of the skies" }, true),
             __Bones = CreateDictionary({ "Reborn Skeleton", "Living Zombie", "Demonic Soul", "Posessed Mummy" }, true),
             __CakePrince = CreateDictionary({ "Head Baker", "Baking Staff", "Cake Guard", "Cookie Crafter" }, true),
             __TyrantSkies = CreateDictionary({ "Sun-kissed Warrior", "Skull Slayer", "Isle Champion", "Serpent Hunter" }, true)
@@ -1893,7 +1893,7 @@ return(function(Installer)
             },
             {
                 ['Submerged Island'] = CFrame.new(9952, -1887, 9678),
-                ['Tiki Outpost'] = CFrame.new(9952, -1887, 9678),
+                ['Tiki Outpost'] = CFrame.new(-16928, 9, 437),
                 ['Castle on the Sea'] = CFrame.new(-5086, 315, -2974),
                 ['Hydra Island'] = CFrame.new(5164, 1174, 222),
                 ['Peanut Island'] = CFrame.new(-2111, 193, -10243),
@@ -2261,4 +2261,4 @@ return(function(Installer)
     end)
 
     return Module
-end)
+end)()

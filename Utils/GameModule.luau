@@ -284,7 +284,7 @@ return(function(Installer)
             end
 
             local Success, RaidModule = pcall(require, ReplicatedStorage:WaitForChild("Raids"))
-            
+
             if not Success or type(RaidModule) ~= "table" then
                 return {
                     "Phoenix", "Dough", "Flame", "Ice", "Quake", "Light",
@@ -365,14 +365,12 @@ return(function(Installer)
             HIT_FUNCTION = nil
         }
 
-        local Data = {
-            ['Control-Control'] = function(remote, Unit)
-                return remote:FireServer(Unit, 1, true)
-            end,
-        }
-
         local RegisterAttack = Net:WaitForChild("RE/RegisterAttack")
         local RegisterHit = Net:WaitForChild("RE/RegisterHit")
+
+        local Hash coroutine.wrap(function()
+            Hash = tostring(LocalPlayer.UserId):sub(2, 4) .. tostring(coroutine.running()):sub(11, 15)
+        end)()
 
         task.defer(function()
             pcall(function()
@@ -427,10 +425,10 @@ return(function(Installer)
             RegisterAttack:FireServer(0.5)
 
             if Combat.HIT_FUNCTION then
-                return Combat.HIT_FUNCTION(target, enemyData)
+                return Combat.HIT_FUNCTION(target, enemyData, nil, Hash)
             end
 
-            RegisterHit:FireServer(target, enemyData)
+            RegisterHit:FireServer(target, enemyData, nil, Hash)
         end
 
         local function Attack()
@@ -448,36 +446,6 @@ return(function(Installer)
                     if not rootPart then continue end
 
                     Fired(rootPart, ProcessEnemy(target))
-                end
-            end
-        end
-
-        local function FruitAttack(a)
-            local LeftClickRemote = a:FindFirstChild('LeftClickRemote')
-
-            if not LeftClickRemote then return end
-
-            local Folders = { Enemies, Settings['Attack Players'] and Characters or nil }
-
-            for _, folder in ipairs(Folders) do
-                if not folder then continue end
-
-                for _, target in pairs(folder:GetChildren()) do
-                    if target == Character then continue end
-                    if not Module:IsAlive(target) then continue end
-
-                    local rootPart = target:FindFirstChild("HumanoidRootPart")
-                    if not rootPart then continue end
-
-                    if Module:Distance(rootPart.Position) > Combat.RANGE then continue end
-
-                    local Unit = (rootPart.Position - HumanoidRootPart.Position).Unit
-
-                    if Data[tostring(a)] then
-                        Data[tostring(a)](LeftClickRemote, Unit)
-                    else
-                        LeftClickRemote:FireServer(Unit, 1)
-                    end
                 end
             end
         end
@@ -510,7 +478,11 @@ return(function(Installer)
             end
 
             if Equiped.ToolTip == 'Blox Fruit' then
-                return pcall(FruitAttack, Equiped)
+                local LeftClickRemote = Equiped:FindFirstChild("LeftClickRemote")
+                if not LeftClickRemote then return end
+                
+                LeftClickRemote:FireServer(Vector3.new(0, -500, 0), 1, true)
+                LeftClickRemote:FireServer(false)
             end
 
             local Type = Equiped and (Equiped.ToolTip == 'Melee' or Equiped.ToolTip == 'Sword')
@@ -534,14 +506,14 @@ return(function(Installer)
             if Executor == "XENO" then
                 return fetch("Utils/Quests.luau")
             end
-            
+
             local Success, Quests = pcall(require, ReplicatedStorage:WaitForChild('Quests'))
-            
+
             if not Success or type(Quests) ~= "table" then
                 return fetch("Utils/Quests.luau")
-                
+
             end
-            
+
             return Quests
         end)()
 
@@ -550,23 +522,23 @@ return(function(Installer)
                 return fetch("Utils/GuideModule.luau")[Module.Sea]
             end
             local Success, GuideModule = pcall(require, ReplicatedStorage:WaitForChild('GuideModule'))
-            
+
             if not Success or type(GuideModule) ~= "table" then
                 return fetch("Utils/GuideModule.luau")[Module.Sea]
             end
-            
+
             return GuideModule
         end)()
 
         function Quest:GetMonster(CurrentLevel)
             local Data, Levels = {}, {}
             local Maximum = ({ {0, 700}, {700, 1500}, {1500, math.huge} })[Module.Sea]
-            
+
             for name, task in pairs(Quest.Quests) do
                 if table.find(Quest.Blacklist, name) then
                     continue
                 end
-                
+
                 for num, mission in pairs(task) do
                     local Level = mission.LevelReq
                     local Monster, Value = next(mission.Task)
@@ -580,15 +552,15 @@ return(function(Installer)
                     end
                 end
             end
-            
+
             if #Levels == 0 then return nil end
-            
+
             return Data[tostring(math.max(unpack(Levels)))]
         end
 
         function Quest:NPCsData(CurrentLevel)
             local Data, Levels = {}, {}
-            
+
             for _, Npcs in pairs(Quest.GuideModule['Data']['NPCList']) do
                 local Level = Npcs.Levels[1]
                 if CurrentLevel >= Level then
@@ -599,15 +571,15 @@ return(function(Installer)
                     }
                 end
             end
-            
+
             if #Levels == 0 then return nil end
-            
+
             return Data[tostring(math.max(unpack(Levels)))]
         end
 
         function Quest:GetQuest(CurrentLevel)
             local Level = CurrentLevel.Value
-            
+
             if Level >= 1 and Level <= 9 then
                 if tostring(LocalPlayer.Team) == "Marines" then
                     return {
@@ -630,16 +602,16 @@ return(function(Installer)
             end
 
             local Data = self:GetMonster(Level)
-            
+
             if not Data then return nil end
 
             local NPCsData = self:NPCsData(Level)
-            
+
             if not NPCsData then return nil end
 
             Data['Quest'] = NPCsData.Quest
             Data['Position'] = CFrame.new(NPCsData.Position)
-            
+
             return Data
         end
 
@@ -1075,7 +1047,7 @@ return(function(Installer)
             ['MasteryRequirements'] = {},
             ['Items'] = {},
         }
-        
+
         do 
             Cache._CountSignals = {}
             Cache._CountData = {}
@@ -1091,7 +1063,7 @@ return(function(Installer)
                         Cache._CountData[key] = value
 
                         local signal = Cache._CountSignals[key]
-                        
+
                         if signal then
                             signal:Fire(value, old)
                         end
@@ -1103,10 +1075,10 @@ return(function(Installer)
                 if not self._CountSignals[key] then
                     self._CountSignals[key] = Module.Signal.new()
                 end
-                
+
                 return self._CountSignals[key]
             end
-            
+
             function Cache:Counts(str)
                 return self.Count[str]
             end
@@ -1541,7 +1513,7 @@ return(function(Installer)
                 if not hrp then continue end
 
                 local distance = Module:Distance(hrp.Position)
-                
+
                 if distance < shortestDistance then
                     shortestDistance = distance
                     closest = seabeast

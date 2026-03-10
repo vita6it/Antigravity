@@ -173,138 +173,136 @@ return {
     },
     {
         {
-            {
-                NPCName = "Cake Quest Giver 1",
-                InternalQuestName = "CakeQuest1",
-                Levels = {2200, 2225},
-                Position = Vector3.new(-2022.2989501953126, 36.928009033203128, -12030.9765625)
-            },
-            {
-                NPCName = "Marine Tree Quest Giver",
-                InternalQuestName = "MarineTreeIsland",
-                Levels = {1700, 1725, 1750},
-                Position = Vector3.new(2485.73291015625, 73.34600830078125, -6788.625)
-            },
-            {
-                NPCName = "Cake Quest Giver 2",
-                InternalQuestName = "CakeQuest2",
-                Levels = {2250, 2275},
-                Position = Vector3.new(-1928.3179931640626, 37.72999572753906, -12840.6259765625)
-            },
-            {
-                NPCName = "Haunted Castle Quest Giver 1",
-                InternalQuestName = "HauntedQuest1",
-                Levels = {1975, 2000},
-                Position = Vector3.new(-9479.216796875, 141.21499633789063, 5566.0927734375)
-            },
-            {
-                NPCName = "Submerged Quest Giver 1",
-                InternalQuestName = "SubmergedQuest1",
-                Levels = {2600, 2625},
-                Position = Vector3.new(10780.6396484375, -2088.4140625, 9260.453125)
-            },
-            {
-                NPCName = "Dragon Crew Quest Giver",
-                InternalQuestName = "DragonCrewQuest",
-                Levels = {1575, 1600},
-                Position = Vector3.new(6735.11083984375, 126.99000549316406, -711.0980224609375)
-            },
-            {
-                NPCName = "Peanut Quest Giver",
-                InternalQuestName = "NutsIslandQuest",
-                Levels = {2075, 2100},
-                Position = Vector3.new(-2105.531982421875, 37.25, -10195.5087890625)
-            },
-            {
-                NPCName = "Haunted Castle Quest Giver 2",
-                InternalQuestName = "HauntedQuest2",
-                Levels = {2025, 2050},
-                Position = Vector3.new(-9516.9931640625, 172.01699829101563, 6078.46484375)
-            },
-            {
-                NPCName = "Submerged Quest Giver 2",
-                InternalQuestName = "SubmergedQuest2",
-                Levels = {2650, 2675},
-                Position = Vector3.new(10883.5986328125, -2086.888916015625, 10034.01953125)
-            },
-            {
-                NPCName = "Submerged Quest Giver 3",
-                InternalQuestName = "SubmergedQuest3",
-                Levels = {2675, 2700},
-                Position = Vector3.new(9637.2939453125, -1993.1351318359376, 9616.3017578125)
-            },
-            {
-                NPCName = "Turtle Adventure Quest Giver",
-                InternalQuestName = "DeepForestIsland3",
-                Levels = {1775, 1800},
-                Position = Vector3.new(-10581.65625, 330.87298583984377, -8761.1865234375)
-            },
-            {
-                NPCName = "Chocolate Quest Giver 2",
-                InternalQuestName = "ChocQuest2",
-                Levels = {2350, 2375},
-                Position = Vector3.new(151.197998046875, 23.891006469726564, -12774.6171875)
-            },
-            {
-                NPCName = "Hydra Town Quest Giver",
-                InternalQuestName = "VenomCrewQuest",
-                Levels = {1625, 1650, 1675},
-                Position = Vector3.new(5214.3388671875, 1003.468017578125, 759.5070190429688)
-            },
-            {
-                NPCName = "Tiki Quest Giver 3",
-                InternalQuestName = "TikiQuest3",
-                Levels = {2550, 2575},
-                Position = Vector3.new(-16665.19140625, 104.59600830078125, 1579.6939697265626)
-            },
-            {
-                NPCName = "Tiki Quest Giver 2",
-                InternalQuestName = "TikiQuest2",
-                Levels = {2500, 2525},
-                Position = Vector3.new(-16541.021484375, 54.77099609375, 1051.4610595703126)
-            },
-            {
-                NPCName = "Deep Forest Area 2 Quest Giver",
-                InternalQuestName = "DeepForestIsland2",
-                Levels = {1900, 1925, 1950},
-                Position = Vector3.new(-12680.3818359375, 389.97100830078127, -9902.01953125)
-            },
-            {
-                NPCName = "Ice Cream Quest Giver",
-                InternalQuestName = "IceCreamIslandQuest",
-                Levels = {2125, 2150, 2175},
-                Position = Vector3.new(-819.3770141601563, 64.92601013183594, -10967.283203125)
-            },
-            {
-                NPCName = "Tiki Quest Giver 1",
-                InternalQuestName = "TikiQuest1",
-                Levels = {2450, 2475},
-                Position = Vector3.new(-16548.81640625, 55.60600280761719, -172.81199645996095)
-            },
-            {
-                NPCName = "Pirate Port Quest Giver",
-                InternalQuestName = "PiratePortQuest",
-                Levels = {1500, 1525, 1550},
-                Position = Vector3.new(-450.1050109863281, 107.68099975585938, 5950.72607421875)
-            },
-            {
-                NPCName = "Chocolate Quest Giver 1",
-                InternalQuestName = "ChocQuest1",
-                Levels = {2300, 2325},
-                Position = Vector3.new(231.75, 23.899993896484376, -12200.2919921875)
-            },
-            {
-                NPCName = "Candy Cane Quest Giver",
-                InternalQuestName = "CandyQuest1",
-                Levels = {2400, 2425},
-                Position = Vector3.new(-1164.498046875, 59.26899719238281, -14492.6181640625)
-            },
-            {
-                NPCName = "Deep Forest Quest Giver",
-                InternalQuestName = "DeepForestIsland",
-                Levels = {1825, 1850, 1875},
-                Position = Vector3.new(-13234.0400390625, 331.4880065917969, -7625.40087890625)
-            },
-        }
+            NPCName = "Cake Quest Giver 1",
+            InternalQuestName = "CakeQuest1",
+            Levels = {2200, 2225},
+            Position = Vector3.new(-2022.2989501953126, 36.928009033203128, -12030.9765625)
+        },
+        {
+            NPCName = "Marine Tree Quest Giver",
+            InternalQuestName = "MarineTreeIsland",
+            Levels = {1700, 1725, 1750},
+            Position = Vector3.new(2485.73291015625, 73.34600830078125, -6788.625)
+        },
+        {
+            NPCName = "Cake Quest Giver 2",
+            InternalQuestName = "CakeQuest2",
+            Levels = {2250, 2275},
+            Position = Vector3.new(-1928.3179931640626, 37.72999572753906, -12840.6259765625)
+        },
+        {
+            NPCName = "Haunted Castle Quest Giver 1",
+            InternalQuestName = "HauntedQuest1",
+            Levels = {1975, 2000},
+            Position = Vector3.new(-9479.216796875, 141.21499633789063, 5566.0927734375)
+        },
+        {
+            NPCName = "Submerged Quest Giver 1",
+            InternalQuestName = "SubmergedQuest1",
+            Levels = {2600, 2625},
+            Position = Vector3.new(10780.6396484375, -2088.4140625, 9260.453125)
+        },
+        {
+            NPCName = "Dragon Crew Quest Giver",
+            InternalQuestName = "DragonCrewQuest",
+            Levels = {1575, 1600},
+            Position = Vector3.new(6735.11083984375, 126.99000549316406, -711.0980224609375)
+        },
+        {
+            NPCName = "Peanut Quest Giver",
+            InternalQuestName = "NutsIslandQuest",
+            Levels = {2075, 2100},
+            Position = Vector3.new(-2105.531982421875, 37.25, -10195.5087890625)
+        },
+        {
+            NPCName = "Haunted Castle Quest Giver 2",
+            InternalQuestName = "HauntedQuest2",
+            Levels = {2025, 2050},
+            Position = Vector3.new(-9516.9931640625, 172.01699829101563, 6078.46484375)
+        },
+        {
+            NPCName = "Submerged Quest Giver 2",
+            InternalQuestName = "SubmergedQuest2",
+            Levels = {2650, 2675},
+            Position = Vector3.new(10883.5986328125, -2086.888916015625, 10034.01953125)
+        },
+        {
+            NPCName = "Submerged Quest Giver 3",
+            InternalQuestName = "SubmergedQuest3",
+            Levels = {2675, 2700},
+            Position = Vector3.new(9637.2939453125, -1993.1351318359376, 9616.3017578125)
+        },
+        {
+            NPCName = "Turtle Adventure Quest Giver",
+            InternalQuestName = "DeepForestIsland3",
+            Levels = {1775, 1800},
+            Position = Vector3.new(-10581.65625, 330.87298583984377, -8761.1865234375)
+        },
+        {
+            NPCName = "Chocolate Quest Giver 2",
+            InternalQuestName = "ChocQuest2",
+            Levels = {2350, 2375},
+            Position = Vector3.new(151.197998046875, 23.891006469726564, -12774.6171875)
+        },
+        {
+            NPCName = "Hydra Town Quest Giver",
+            InternalQuestName = "VenomCrewQuest",
+            Levels = {1625, 1650, 1675},
+            Position = Vector3.new(5214.3388671875, 1003.468017578125, 759.5070190429688)
+        },
+        {
+            NPCName = "Tiki Quest Giver 3",
+            InternalQuestName = "TikiQuest3",
+            Levels = {2550, 2575},
+            Position = Vector3.new(-16665.19140625, 104.59600830078125, 1579.6939697265626)
+        },
+        {
+            NPCName = "Tiki Quest Giver 2",
+            InternalQuestName = "TikiQuest2",
+            Levels = {2500, 2525},
+            Position = Vector3.new(-16541.021484375, 54.77099609375, 1051.4610595703126)
+        },
+        {
+            NPCName = "Deep Forest Area 2 Quest Giver",
+            InternalQuestName = "DeepForestIsland2",
+            Levels = {1900, 1925, 1950},
+            Position = Vector3.new(-12680.3818359375, 389.97100830078127, -9902.01953125)
+        },
+        {
+            NPCName = "Ice Cream Quest Giver",
+            InternalQuestName = "IceCreamIslandQuest",
+            Levels = {2125, 2150, 2175},
+            Position = Vector3.new(-819.3770141601563, 64.92601013183594, -10967.283203125)
+        },
+        {
+            NPCName = "Tiki Quest Giver 1",
+            InternalQuestName = "TikiQuest1",
+            Levels = {2450, 2475},
+            Position = Vector3.new(-16548.81640625, 55.60600280761719, -172.81199645996095)
+        },
+        {
+            NPCName = "Pirate Port Quest Giver",
+            InternalQuestName = "PiratePortQuest",
+            Levels = {1500, 1525, 1550},
+            Position = Vector3.new(-450.1050109863281, 107.68099975585938, 5950.72607421875)
+        },
+        {
+            NPCName = "Chocolate Quest Giver 1",
+            InternalQuestName = "ChocQuest1",
+            Levels = {2300, 2325},
+            Position = Vector3.new(231.75, 23.899993896484376, -12200.2919921875)
+        },
+        {
+            NPCName = "Candy Cane Quest Giver",
+            InternalQuestName = "CandyQuest1",
+            Levels = {2400, 2425},
+            Position = Vector3.new(-1164.498046875, 59.26899719238281, -14492.6181640625)
+        },
+        {
+            NPCName = "Deep Forest Quest Giver",
+            InternalQuestName = "DeepForestIsland",
+            Levels = {1825, 1850, 1875},
+            Position = Vector3.new(-13234.0400390625, 331.4880065917969, -7625.40087890625)
+        },
     }
 }

@@ -528,7 +528,7 @@ return(function(Installer)
                 return fetch("Utils/GuideModule.luau")[Module.Sea]
             end
 
-            return GuideModule
+            return GuideModule['Data']['NPCList']
         end)()
 
         function Quest:GetMonster(CurrentLevel)

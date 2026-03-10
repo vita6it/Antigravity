@@ -298,8 +298,9 @@ AddModule("Parallels", function()
 
             if not Success then
                 ShowErrorMessage(ErrorMessage)
+                warn(ErrorMessage)
 
-                task.delay(10, function()
+                task.delay(5, function()
                     if _ENV.error_message then
                         _ENV.error_message.Text = "- Antigravity Model -\nStart Refresh Options ..."
 

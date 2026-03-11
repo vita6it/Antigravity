@@ -313,9 +313,9 @@ return(function(Installer)
                 Vector3.new(-6505, 125, -130) -- Out Ghost Ship
             },
             [3] = {
-                Vector3.new(-5076, 314, -3151), -- Castle on the Sea
-                Vector3.new(5657, 1013, -338), -- Hydra
-                Vector3.new(-12479, 375, -7566) -- Mansion 
+                Vector3.new(-5100, 450, -3250), -- Castle on the Sea
+                Vector3.new(5750, 1120, -338), -- Hydra
+                Vector3.new(-12540, 333, -7600) -- Mansion 
             }
         }
     end

@@ -167,25 +167,16 @@ return(function(Installer)
 
         function Module:HaveItem(name)
             if not IsAlive() then return end
-            if not Backpack then return end
-
-            if Character and Character:FindFirstChild(name) then
-                return true
-            end
-
-            if Backpack:FindFirstChild(name) then
-                return true
-            end
 
             local Inventory = Module:ComF("getInventoryWeapons")
 
             for _, v in pairs(Inventory) do
                 if v.Name == name then
-                    return true
+                    return v
                 end
             end
-
-            return false
+            
+            return Character:FindFirstChild(name) or Backpack:FindFirstChild(name)
         end
 
         function Module:Equip(Name, Tooltip)

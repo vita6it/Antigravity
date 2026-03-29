@@ -582,7 +582,7 @@ return(function(Installer)
                         ['Monster'] = "Trainee",
                         ['Level'] = 1,
                         ['Quest'] = "MarineQuest",
-                        ['Position'] = CFrame.new(1059, 15, 1550),
+                        ['Position'] = CFrame.new(-2711, 24, 2104),
                     }
                 elseif tostring(LocalPlayer.Team) == "Pirates" then
                     return {
@@ -590,7 +590,7 @@ return(function(Installer)
                         ['Monster'] = "Bandit",
                         ['Level'] = 1,
                         ['Quest'] = "BanditQuest1",
-                        ['Position'] = CFrame.new(-2711, 24, 2104),
+                        ['Position'] = CFrame.new(1059, 15, 1550),
                     }
                 end
 

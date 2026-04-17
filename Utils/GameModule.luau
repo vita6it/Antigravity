@@ -421,6 +421,8 @@ return(function(Installer)
 
             RegisterHit:FireServer(target, enemyData, nil, Hash)
         end
+        
+        Combat.ATTACK = Fired
 
         local function Attack()
             local Folders = { Enemies, Settings['Attack Players'] and Characters or nil }
